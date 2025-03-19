@@ -1,112 +1,126 @@
 <?php
 session_start();
-require_once('../db/config.php');
+require '../database/database.php';
 
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    header('Location: ../login.php');
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    header("Location: ../public/login.php");
     exit();
 }
 
-// 🔹 Récupération des utilisateurs
-$sql = "SELECT * FROM users";
-$stmt = $pdo->query($sql);
-$users = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// 🔹 Ajouter un utilisateur (Formulaire soumis)
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_user'])) {
-    $name = htmlspecialchars($_POST['name']);
-    $email = htmlspecialchars($_POST['email']);
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-    $role = $_POST['role'];
-
-    // Insertion dans la base de données
-    $sql = "INSERT INTO users (name, email, password, role) VALUES (:name, :email, :password, :role)";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([
-        ':name' => $name,
-        ':email' => $email,
-        ':password' => $password,
-        ':role' => $role
-    ]);
-
-    // Rafraîchir la page pour voir le nouvel utilisateur
-    header('Location: manage_users.php');
-    exit();
-}
-
-// 🔹 Supprimer un utilisateur
-if (isset($_GET['delete'])) {
-    $userId = $_GET['delete'];
-    $sql = "DELETE FROM users WHERE id = :id";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([':id' => $userId]);
-
-    // Rafraîchir la page
-    header('Location: manage_users.php');
-    exit();
-}
-
-include('includes/header.php');
-include('includes/sidebar.php');
+// Récupérer tous les utilisateurs avec leur entreprise et statut (actif, archivé, banni)
+$stmt = $conn->prepare("SELECT id, first_name, last_name, email, role, company, status FROM users ORDER BY role DESC");
+$stmt->execute();
+$result = $stmt->get_result();
+$users = $result->fetch_all(MYSQLI_ASSOC);
 ?>
 
-<div class="main-content">
-    <h1>Gestion des Utilisateurs</h1>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des utilisateurs</title>
+    <link rel="stylesheet" href="../assets/css/admin.css">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: #1f1f1f;
+            color: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #444;
+        }
+        th {
+            background: #ff9800;
+            color: #121212;
+        }
+        tr:hover {
+            background: #292929;
+        }
+        .btn-warning, .btn-danger, .btn {
+            display: inline-block;
+            width: 100px;
+            text-align: center;
+        }
+        .btn-warning {
+            background: #ffcc00;
+            color: black;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        .btn-warning:hover {
+            background: #e6b800;
+        }
+        .btn-danger {
+            background: #ff4b4b;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        .btn-danger:hover {
+            background: #e63939;
+        }
+        .archived {
+            background: rgba(255, 204, 0, 0.2);
+        }
+        .banned {
+            background: rgba(255, 75, 75, 0.2);
+        }
+    </style>
+</head>
+<body>
+<?php include __DIR__ . '/../includes/header_admin.php'; ?>
 
-    <!-- 🔹 Formulaire d'ajout d'utilisateur -->
-    <div class="form-container">
-        <h2>Ajouter un utilisateur</h2>
-        <form action="manage_users.php" method="POST">
-            <label for="name">Nom</label>
-            <input type="text" name="name" id="name" required>
+    <main>
+        <section class="admin-dashboard">
+            <div class="container">
+                <h1>Gestion des utilisateurs</h1>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Prénom</th>
+                            <th>Nom</th>
+                            <th>Email</th>
+                            <th>Rôle</th>
+                            <th>Entreprise</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($users as $user): ?>
+                            <tr class="<?php echo ($user['status'] == 'archived') ? 'archived' : (($user['status'] == 'banned') ? 'banned' : ''); ?>">
+                                <td><?php echo htmlspecialchars($user['id']); ?></td>
+                                <td><?php echo htmlspecialchars($user['first_name']); ?></td>
+                                <td><?php echo htmlspecialchars($user['last_name']); ?></td>
+                                <td><?php echo htmlspecialchars($user['email']); ?></td>
+                                <td><?php echo htmlspecialchars($user['role']); ?></td>
+                                <td><?php echo htmlspecialchars($user['company'] ?: 'Non renseigné'); ?></td>
+                                <td><?php echo ucfirst(htmlspecialchars($user['status'])); ?></td>
+                                <td>
+                                    <a href="edit_user.php?id=<?php echo $user['id']; ?>" class="btn">Modifier</a>
+                                    <a href="archive_user.php?id=<?php echo $user['id']; ?>" class="btn-warning" onclick="return confirm('Voulez-vous vraiment archiver cet utilisateur ?');">Archiver</a>
+                                    <a href="ban_user.php?id=<?php echo $user['id']; ?>" class="btn-danger" onclick="return confirm('Voulez-vous vraiment bannir cet utilisateur ?');">Bannir</a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
 
-            <label for="email">Email</label>
-            <input type="email" name="email" id="email" required>
-
-            <label for="password">Mot de passe</label>
-            <input type="password" name="password" id="password" required>
-
-            <label for="role">Rôle</label>
-            <select name="role" id="role">
-                <option value="admin">Admin</option>
-                <option value="employe">Employé</option>
-                <option value="prestataire">Prestataire</option>
-                <option value="user">Utilisateur</option>
-            </select>
-
-            <button type="submit" name="add_user" class="btn">Ajouter l'utilisateur</button>
-        </form>
-    </div>
-
-    <!-- 🔹 Tableau des utilisateurs -->
-    <h2>Liste des Utilisateurs</h2>
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nom</th>
-                    <th>Email</th>
-                    <th>Rôle</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($users as $user): ?>
-                    <tr>
-                        <td><?= $user['id']; ?></td>
-                        <td><?= htmlspecialchars($user['name']); ?></td>
-                        <td><?= htmlspecialchars($user['email']); ?></td>
-                        <td><?= ucfirst($user['role']); ?></td>
-                        <td>
-                            <a href="edit_user.php?id=<?= $user['id']; ?>" class="btn-edit">Modifier</a>
-                            <a href="manage_users.php?delete=<?= $user['id']; ?>" class="btn-delete" onclick="return confirm('Supprimer cet utilisateur ?');">Supprimer</a>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<?php include('includes/footer.php'); ?>
+    <?php include '../includes/footer_admin.php'; ?>
+</body>
+</html>
