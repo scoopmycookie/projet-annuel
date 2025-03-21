@@ -2,16 +2,20 @@
 session_start();
 require '../database/database.php';
 
+// Activer le débogage
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Vérifier si l'utilisateur est admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../public/login.php");
     exit();
 }
 
-// Récupérer tous les utilisateurs avec leur entreprise et statut (actif, archivé, banni)
-$stmt = $conn->prepare("SELECT id, first_name, last_name, email, role, company, status FROM users ORDER BY role DESC");
+// Récupérer tous les utilisateurs
+$stmt = $conn->prepare("SELECT id, first_name, last_name, email, phone, address, gender, role, company, status, created_at FROM users ORDER BY id DESC");
 $stmt->execute();
 $result = $stmt->get_result();
-$users = $result->fetch_all(MYSQLI_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -19,108 +23,82 @@ $users = $result->fetch_all(MYSQLI_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion des utilisateurs</title>
+    <title>Gestion des Utilisateurs</title>
     <link rel="stylesheet" href="../assets/css/admin.css">
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background: #1f1f1f;
-            color: white;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        th, td {
-            padding: 15px;
-            text-align: center;
-            border-bottom: 1px solid #444;
-        }
-        th {
-            background: #ff9800;
-            color: #121212;
-        }
-        tr:hover {
-            background: #292929;
-        }
-        .btn-warning, .btn-danger, .btn {
-            display: inline-block;
-            width: 100px;
-            text-align: center;
-        }
-        .btn-warning {
-            background: #ffcc00;
-            color: black;
-            padding: 10px 15px;
-            border-radius: 5px;
-            text-decoration: none;
-            transition: background 0.3s;
-        }
-        .btn-warning:hover {
-            background: #e6b800;
-        }
-        .btn-danger {
-            background: #ff4b4b;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 5px;
-            text-decoration: none;
-            transition: background 0.3s;
-        }
-        .btn-danger:hover {
-            background: #e63939;
-        }
-        .archived {
-            background: rgba(255, 204, 0, 0.2);
-        }
-        .banned {
-            background: rgba(255, 75, 75, 0.2);
-        }
-    </style>
 </head>
 <body>
+
 <?php include __DIR__ . '/../includes/header_admin.php'; ?>
 
-    <main>
-        <section class="admin-dashboard">
-            <div class="container">
-                <h1>Gestion des utilisateurs</h1>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Prénom</th>
-                            <th>Nom</th>
-                            <th>Email</th>
-                            <th>Rôle</th>
-                            <th>Entreprise</th>
-                            <th>Statut</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($users as $user): ?>
-                            <tr class="<?php echo ($user['status'] == 'archived') ? 'archived' : (($user['status'] == 'banned') ? 'banned' : ''); ?>">
-                                <td><?php echo htmlspecialchars($user['id']); ?></td>
-                                <td><?php echo htmlspecialchars($user['first_name']); ?></td>
-                                <td><?php echo htmlspecialchars($user['last_name']); ?></td>
-                                <td><?php echo htmlspecialchars($user['email']); ?></td>
-                                <td><?php echo htmlspecialchars($user['role']); ?></td>
-                                <td><?php echo htmlspecialchars($user['company'] ?: 'Non renseigné'); ?></td>
-                                <td><?php echo ucfirst(htmlspecialchars($user['status'])); ?></td>
-                                <td>
-                                    <a href="edit_user.php?id=<?php echo $user['id']; ?>" class="btn">Modifier</a>
-                                    <a href="archive_user.php?id=<?php echo $user['id']; ?>" class="btn-warning" onclick="return confirm('Voulez-vous vraiment archiver cet utilisateur ?');">Archiver</a>
-                                    <a href="ban_user.php?id=<?php echo $user['id']; ?>" class="btn-danger" onclick="return confirm('Voulez-vous vraiment bannir cet utilisateur ?');">Bannir</a>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-    </main>
+<main>
+    <section class="container">
+        <h1>Gestion des utilisateurs</h1>
 
-    <?php include '../includes/footer_admin.php'; ?>
+        <?php if (isset($_GET['success'])) : ?>
+            <p class="success-msg"><?php echo htmlspecialchars($_GET['success']); ?></p>
+        <?php endif; ?>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Prénom</th>
+                        <th>Nom</th>
+                        <th>Email</th>
+                        <th>Téléphone</th>
+                        <th>Adresse</th>
+                        <th>Genre</th>
+                        <th>Rôle</th>
+                        <th>Entreprise</th>
+                        <th>Statut</th>
+                        <th>Date d'inscription</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($row = $result->fetch_assoc()) : ?>
+                        <tr>
+                            <td><?php echo $row['id']; ?></td>
+                            <td><?php echo htmlspecialchars($row['first_name']); ?></td>
+                            <td><?php echo htmlspecialchars($row['last_name']); ?></td>
+                            <td><?php echo htmlspecialchars($row['email']); ?></td>
+                            <td><?php echo htmlspecialchars($row['phone']); ?></td>
+                            <td><?php echo htmlspecialchars($row['address']); ?></td>
+                            <td><?php echo htmlspecialchars($row['gender']); ?></td>
+                            <td><?php echo ucfirst($row['role']); ?></td>
+                            <td><?php echo $row['company'] ? htmlspecialchars($row['company']) : 'Non renseigné'; ?></td>
+                            <td>
+                                <?php if ($row['status'] === 'active') : ?>
+                                    <span class="status-active">Active</span>
+                                <?php elseif ($row['status'] === 'archived') : ?>
+                                    <span class="status-archived">Archivé</span>
+                                <?php else : ?>
+                                    <span class="status-banned">Banni</span>
+                                <?php endif; ?>
+                            </td>
+                            <td><?php echo date("d/m/Y", strtotime($row['created_at'])); ?></td>
+                            <td class="action-buttons">
+                                <a href="edit_user.php?id=<?php echo $row['id']; ?>" class="btn btn-orange">Modifier</a>
+
+                                <?php if ($row['status'] === 'archived') : ?>
+                                    <a href="unarchive_user.php?id=<?php echo $row['id']; ?>" class="btn btn-green">Désarchiver</a>
+                                <?php elseif ($row['status'] === 'banned') : ?>
+                                    <a href="unban_user.php?id=<?php echo $row['id']; ?>" class="btn btn-blue">Débannir</a>
+                                <?php else : ?>
+                                    <a href="archive_user.php?id=<?php echo $row['id']; ?>" class="btn btn-yellow">Archiver</a>
+                                    <a href="ban_user.php?id=<?php echo $row['id']; ?>" class="btn btn-red">Bannir</a>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<?php include __DIR__ . '/../includes/footer_admin.php'; ?>
+
 </body>
 </html>
