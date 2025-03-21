@@ -1,10 +1,13 @@
 /* Styles généraux */
-body {
-    font-family: 'Arial', sans-serif;
+html, body {
+    height: 100%;
     margin: 0;
     padding: 0;
+    font-family: 'Arial', sans-serif;
     background-color: #121212; /* Fond noir */
     color: #ffffff; /* Texte blanc */
+    display: flex;
+    flex-direction: column;
 }
 
 .container {
@@ -12,12 +15,13 @@ body {
     max-width: 1100px;
     margin: auto;
     padding: 20px;
+    flex: 1; /* Permet au contenu de s'étendre */
 }
 
 /* Header */
 header {
-    background: #1f1f1f; /* Noir léger */
-    color: #fff;
+    background: #1f1f1f;
+    color: white;
     padding: 15px 0;
     text-align: center;
     position: fixed;
@@ -32,8 +36,6 @@ header .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1100px;
-    margin: auto;
     padding: 0 20px;
 }
 
@@ -62,11 +64,52 @@ header nav ul li a:hover {
     background: rgba(255, 255, 255, 0.2);
 }
 
+/* Fixe le footer en bas de la page */
+footer {
+    background: #1f1f1f;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    margin-top: auto;
+    width: 100%;
+    position: relative;
+    bottom: 0;
+    flex-shrink: 0;
+}
+
+/* Espacement sous le contenu pour éviter qu'il touche le footer */
+main {
+    flex: 1;
+    padding-bottom: 30px;
+}
+
+/* Footer navigation */
+footer nav ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+footer nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    padding: 5px 10px;
+    transition: color 0.3s;
+}
+
+footer nav ul li a:hover {
+    text-decoration: underline;
+    color: #ff9800;
+}
+
 /* Boutons */
 .btn {
     display: inline-block;
     padding: 12px 24px;
-    background: #ff9800; /* Orange vif */
+    background: #ff9800;
     color: white;
     text-decoration: none;
     border-radius: 5px;
@@ -81,33 +124,121 @@ header nav ul li a:hover {
     transform: scale(1.05);
 }
 
-/* Dashboard */
-.admin-dashboard {
-    text-align: center;
-    padding: 80px 20px;
-    margin-top: 60px;
+/* Tableaux */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 20px;
 }
 
-.dashboard-options {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 20px;
-    margin-top: 30px;
-}
-
-.dashboard-options a {
-    background: #ff9800;
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #1e1e1e;
     color: white;
-    padding: 15px 30px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #333;
+}
+
+th {
+    background: #ff9800;
+    color: black;
+    font-weight: bold;
+}
+
+tr:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Statuts */
+.status-active {
+    background: #28a745;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.status-archived {
+    background: #ffc107;
+    color: black;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.status-banned {
+    background: #dc3545;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+/* Boutons colorés */
+.btn-yellow {
+    background: #ffc107;
+    color: black;
+    padding: 10px 15px;
     border-radius: 5px;
     text-decoration: none;
     font-weight: bold;
     transition: 0.3s;
 }
 
-.dashboard-options a:hover {
-    background: #e68900;
+.btn-yellow:hover {
+    background: #e0a800;
+    transform: scale(1.05);
+}
+
+.btn-green {
+    background: #28a745;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-green:hover {
+    background: #218838;
+    transform: scale(1.05);
+}
+
+.btn-red {
+    background: #dc3545;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-red:hover {
+    background: #c82333;
+    transform: scale(1.05);
+}
+
+.btn-blue {
+    background: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-blue:hover {
+    background: #0056b3;
     transform: scale(1.05);
 }
 
@@ -144,7 +275,80 @@ input:focus, select:focus {
     outline: none;
 }
 
-/* Tableau des utilisateurs */
+/* Messages de succès */
+.success-msg {
+    background: #d4edda;
+    color: #155724;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+/* Styles des sections du dashboard */
+.recent-activities {
+    background: #1e1e1e;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.activity-container {
+    display: flex;
+    gap: 20px;
+}
+
+.activity-box {
+    background: #2a2a2a;
+    padding: 15px;
+    border-radius: 8px;
+    flex: 1;
+}
+
+.activity-box h3 {
+    color: #ff9800;
+}
+
+.activity-box ul {
+    list-style: none;
+    padding: 0;
+}
+
+.activity-box ul li {
+    padding: 5px 0;
+    border-bottom: 1px solid #444;
+}
+
+.activity-box ul li:last-child {
+    border-bottom: none;
+}
+
+/* Planning */
+.planning {
+    background: #1e1e1e;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* Effet hover sur les liens du header */
+header nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: color 0.3s ease-in-out; /* Transition fluide */
+}
+
+header nav ul li a:hover {
+    color: #ff9800; /* Change la couleur du texte en orange */
+    background: none; /* Supprime tout fond au survol */
+}
+
+/* Tableaux des entreprises */
 .table-container {
     width: 100%;
     overflow-x: auto;
@@ -176,7 +380,7 @@ tr:hover {
     background: rgba(255, 255, 255, 0.1);
 }
 
-/* Statuts des utilisateurs */
+/* Statuts */
 .status-active {
     background: #28a745;
     color: white;
@@ -201,32 +405,55 @@ tr:hover {
     font-weight: bold;
 }
 
-/* Footer */
-footer {
-    background: #1f1f1f;
-    color: white;
-    text-align: center;
-    padding: 10px 0;
-    margin-top: 30px;
-}
-
-footer nav ul {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-}
-
-footer nav ul li a {
-    color: white;
+/* Boutons */
+.btn-orange {
+    background: #ff9800;
+    padding: 8px 12px;
+    border-radius: 5px;
     text-decoration: none;
-    font-size: 14px;
-    padding: 5px 10px;
-    transition: color 0.3s;
+    font-weight: bold;
+    color: white;
 }
 
-footer nav ul li a:hover {
-    text-decoration: underline;
-    color: #ff9800;
+.btn-orange:hover {
+    background: #e68900;
+}
+
+.btn-yellow {
+    background: #ffc107;
+    padding: 8px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    color: black;
+}
+
+.btn-yellow:hover {
+    background: #e0a800;
+}
+
+.btn-green {
+    background: #28a745;
+    padding: 8px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    color: white;
+}
+
+.btn-green:hover {
+    background: #218838;
+}
+
+.btn-red {
+    background: #dc3545;
+    padding: 8px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    color: white;
+}
+
+.btn-red:hover {
+    background: #c82333;
 }

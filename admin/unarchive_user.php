@@ -29,15 +29,15 @@ if ($result->num_rows === 0) {
     die("Utilisateur introuvable.");
 }
 
-// Bannir l'utilisateur (changer le statut en "banned")
-$update_stmt = $conn->prepare("UPDATE users SET status = 'banned' WHERE id = ?");
+// Désarchiver l'utilisateur (changer le statut en "active")
+$update_stmt = $conn->prepare("UPDATE users SET status = 'active' WHERE id = ?");
 $update_stmt->bind_param("i", $user_id);
 
 if ($update_stmt->execute()) {
     // Redirection après succès
-    header("Location: manage_users.php?success=Utilisateur banni avec succès");
+    header("Location: manage_users.php?success=Utilisateur désarchivé avec succès");
     exit();
 } else {
-    die("Erreur lors du bannissement : " . $update_stmt->error);
+    die("Erreur lors de la désarchivation : " . $update_stmt->error);
 }
 ?>
