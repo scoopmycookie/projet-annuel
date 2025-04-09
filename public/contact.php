@@ -12,47 +12,54 @@ session_start();
 <body>
 <?php include __DIR__ . '/../includes/header_public.php'; ?>
 
-    <main>
-        <section class="hero">
-            <div class="container">
-                <h1>Contactez-nous</h1>
-                <p>Une question ? Besoin d'informations ? Remplissez le formulaire ci-dessous, nous vous répondrons rapidement.</p>
-            </div>
-        </section>
+<main>
+    <section class="hero">
+        <div class="container">
+            <h1>Contactez-nous</h1>
+            <p>Une question ? Besoin d'informations ? Remplissez le formulaire ci-dessous, nous vous répondrons rapidement.</p>
+        </div>
+    </section>
 
-        <section class="contact-form">
-            <div class="container">
-                <form action="submit_contact.php" method="POST">
-                    <label for="nom">Nom et Prénom</label>
-                    <input type="text" id="nom" name="nom" required>
+    <section class="contact-form">
+        <div class="container">
 
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required>
+            <!-- Messages de retour -->
+            <?php if (isset($_SESSION['contact_success'])): ?>
+                <p class="success-msg"><?= $_SESSION['contact_success']; unset($_SESSION['contact_success']); ?></p>
+            <?php endif; ?>
 
-                    <label for="telephone">Téléphone</label>
-                    <input type="tel" id="telephone" name="telephone">
+            <?php if (isset($_SESSION['contact_error'])): ?>
+                <p class="error-msg"><?= $_SESSION['contact_error']; unset($_SESSION['contact_error']); ?></p>
+            <?php endif; ?>
 
-                    <label for="sujet">Sujet</label>
-                    <input type="text" id="sujet" name="sujet" required>
+            <form action="submit_contact.php" method="POST">
+                <label for="name">Nom et Prénom</label>
+                <input type="text" id="name" name="name" required>
 
-                    <label for="message">Message</label>
-                    <textarea id="message" name="message" rows="5" required></textarea>
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
 
-                    <button type="submit" class="btn">Envoyer le message</button>
-                </form>
-            </div>
-        </section>
+                <label for="subject">Sujet</label>
+                <input type="text" id="subject" name="subject" required>
 
-        <section class="contact-info">
-            <div class="container">
-                <h2>Nos Coordonnées</h2>
-                <p><strong>Email :</strong> contact@businesscare.com</p>
-                <p><strong>Téléphone :</strong> +33 1 23 45 67 89</p>
-                <p><strong>Adresse :</strong> 10 Rue du Bien-être, 75001 Paris, France</p>
-            </div>
-        </section>
-    </main>
+                <label for="message">Message</label>
+                <textarea id="message" name="message" rows="5" required></textarea>
 
-    <?php include '../includes/footer_public.php'; ?>
+                <button type="submit" class="btn">Envoyer le message</button>
+            </form>
+        </div>
+    </section>
+
+    <section class="contact-info">
+        <div class="container">
+            <h2>Nos Coordonnées</h2>
+            <p><strong>Email :</strong> contact@businesscare.com</p>
+            <p><strong>Téléphone :</strong> +33 1 23 45 67 89</p>
+            <p><strong>Adresse :</strong> 10 Rue du Bien-être, 75001 Paris, France</p>
+        </div>
+    </section>
+</main>
+
+<?php include '../includes/footer_public.php'; ?>
 </body>
 </html>

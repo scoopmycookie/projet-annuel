@@ -1,7 +1,7 @@
 <?php
 
 $host = 'localhost';
-$dbname = 'business2_care';
+$dbname = 'businesscare';
 $username = 'root'; // Remplacez par votre utilisateur MySQL
 $password = 'root'; // Remplacez par votre mot de passe MySQL
 

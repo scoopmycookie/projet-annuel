@@ -12,21 +12,21 @@
     <div class="container">
         <div class="logo">
             <a href="/business-care/public/index.php">
-                <img src="/business-care/assets/images/logo.png" alt="Business Care Logo">
+                <img src="/assets/images/logo.png" alt="Business Care Logo">
             </a>
         </div>
         <nav>
             <ul>
-                <li><a href="/business-care/public/index.php">Accueil</a></li>
-                <li><a href="/business-care/public/services.php">Services</a></li>
-                <li><a href="/business-care/public/devis.php">Devis</a></li>
-                <li><a href="/business-care/public/contact.php">Contact</a></li>
+                <li><a href="/public/index.php">Accueil</a></li>
+                <li><a href="/public/services.php">Services</a></li>
+                <li><a href="/public/devis.php">Devis</a></li>
+                <li><a href="/public/contact.php">Contact</a></li>
                 <?php if(isset($_SESSION['user_id'])): ?>
-                    <li><a href="/business-care/employees/dashboard.php">Espace Personnel</a></li>
-                    <li><a href="/business-care/public/logout.php">Déconnexion</a></li>
+                    <li><a href="/employees/dashboard.php">Espace Personnel</a></li>
+                    <li><a href="/public/logout.php">Déconnexion</a></li>
                 <?php else: ?>
-                    <li><a href="/business-care/public/login.php">Connexion</a></li>
-                    <li><a href="/business-care/public/register.php">Inscription</a></li>
+                    <li><a href="/public/login.php">Connexion</a></li>
+                    <li><a href="/public/register.php">Inscription</a></li>
                 <?php endif; ?>
             </ul>
         </nav>
