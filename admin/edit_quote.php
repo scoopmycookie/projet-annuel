@@ -14,14 +14,12 @@ if (!isset($_GET['id'])) {
 
 $id = $_GET['id'];
 
-// Récupérer le devis
 $stmt = $conn->prepare("SELECT * FROM quotes WHERE id = ?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
 $result = $stmt->get_result();
 $quote = $result->fetch_assoc();
 
-// Récupérer les entreprises
 $companies = $conn->query("SELECT id, name FROM companies ORDER BY name");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

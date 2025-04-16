@@ -10,10 +10,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-// Récupérer les utilisateurs clients et fournisseurs
 $users = $conn->query("SELECT id, first_name, last_name, email, role FROM users WHERE role IN ('client', 'supplier') ORDER BY role, last_name");
 
-// Traitement de l'envoi
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $recipient_id = $_POST['recipient_id'];
     $subject = $_POST['subject'];

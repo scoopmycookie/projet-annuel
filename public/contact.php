@@ -23,7 +23,7 @@ session_start();
     <section class="contact-form">
         <div class="container">
 
-            <!-- Messages de retour -->
+            
             <?php if (isset($_SESSION['contact_success'])): ?>
                 <p class="success-msg"><?= $_SESSION['contact_success']; unset($_SESSION['contact_success']); ?></p>
             <?php endif; ?>

@@ -9,17 +9,10 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'supplier') {
 
 $supplier_id = $_SESSION['user_id'];
 
-// Récupération de l'entreprise du fournisseur
-$stmt = $conn->prepare("SELECT company FROM users WHERE id = ?");
+$stmt = $conn->prepare("SELECT * FROM services WHERE company = ?");
 $stmt->bind_param("i", $supplier_id);
 $stmt->execute();
-$company = $stmt->get_result()->fetch_assoc()['company'];
-
-// Récupération des services liés à cette entreprise
-$services = $conn->prepare("SELECT * FROM services WHERE company = ?");
-$services->bind_param("s", $company);
-$services->execute();
-$result = $services->get_result();
+$result = $stmt->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -41,10 +34,10 @@ $result = $services->get_result();
         <form action="add_service.php" method="POST">
             <input type="text" name="title" placeholder="Titre du service" required>
             <textarea name="description" placeholder="Description" rows="3" required></textarea>
-            <input type="number" name="price" placeholder="Prix (€)" required>
+            <input type="number" name="price" placeholder="Prix (€)" required step="0.01" min="0">
             <input type="date" name="start_date" required>
             <input type="date" name="end_date" required>
-            <button type="submit" class="btn">Ajouter</button>
+            <button type="submit" class="btn btn-green">Ajouter</button>
         </form>
     </section>
 
@@ -63,20 +56,24 @@ $result = $services->get_result();
                 </tr>
             </thead>
             <tbody>
-                <?php while ($service = $result->fetch_assoc()) : ?>
-                    <tr>
-                        <td><?= htmlspecialchars($service['title']) ?></td>
-                        <td><?= htmlspecialchars($service['description']) ?></td>
-                        <td><?= number_format($service['price'], 2) ?> €</td>
-                        <td><?= $service['start_date'] ?></td>
-                        <td><?= $service['end_date'] ?></td>
-                        <td><?= ucfirst($service['status']) ?></td>
-                        <td>
-                            <a href="edit_service.php?id=<?= $service['id'] ?>" class="btn btn-orange">Modifier</a>
-                            <a href="delete_service.php?id=<?= $service['id'] ?>" class="btn btn-red" onclick="return confirm('Supprimer ce service ?')">Supprimer</a>
-                        </td>
-                    </tr>
-                <?php endwhile; ?>
+                <?php if ($result->num_rows === 0): ?>
+                    <tr><td colspan="7">Aucun service enregistré.</td></tr>
+                <?php else: ?>
+                    <?php while ($service = $result->fetch_assoc()) : ?>
+                        <tr>
+                            <td><?= htmlspecialchars($service['title']) ?></td>
+                            <td><?= nl2br(htmlspecialchars($service['description'])) ?></td>
+                            <td><?= number_format($service['price'], 2) ?> €</td>
+                            <td><?= htmlspecialchars($service['start_date']) ?></td>
+                            <td><?= htmlspecialchars($service['end_date']) ?></td>
+                            <td><?= ucfirst(htmlspecialchars($service['status'])) ?></td>
+                            <td>
+                                <a href="edit_service.php?id=<?= $service['id'] ?>" class="btn btn-orange">✏️ Modifier</a>
+                                <a href="delete_service.php?id=<?= $service['id'] ?>" class="btn btn-red" onclick="return confirm('Supprimer ce service ?')">🗑️ Supprimer</a>
+                            </td>
+                        </tr>
+                    <?php endwhile; ?>
+                <?php endif; ?>
             </tbody>
         </table>
     </div>

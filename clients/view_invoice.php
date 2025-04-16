@@ -3,7 +3,6 @@ require '../libs/fpdf.php';
 require '../database/database.php';
 session_start();
 
-// Vérifie que le client est connecté
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'client') {
     die("Accès refusé.");
 }
@@ -15,7 +14,6 @@ if (!$quote_id) {
     die("ID de devis manquant.");
 }
 
-// Étape 1 : récupérer les infos du client
 $stmt = $conn->prepare("SELECT first_name, last_name, company FROM users WHERE id = ?");
 $stmt->bind_param("i", $client_id);
 $stmt->execute();
@@ -28,7 +26,6 @@ if ($user_result->num_rows === 0) {
 $user = $user_result->fetch_assoc();
 $company = $user['company'];
 
-// Étape 2 : récupérer le devis uniquement s'il appartient à cette entreprise
 $stmt2 = $conn->prepare("SELECT * FROM quotes WHERE id = ? AND company = ?");
 $stmt2->bind_param("is", $quote_id, $company);
 $stmt2->execute();
@@ -40,23 +37,20 @@ if ($quote_result->num_rows === 0) {
 
 $quote = $quote_result->fetch_assoc();
 
-// Encodage des caractères spéciaux
 function encode($text) {
     return iconv("UTF-8", "ISO-8859-1//TRANSLIT", $text);
 }
 
-// Création du PDF
+
 $pdf = new FPDF();
 $pdf->AddPage();
 
-// ✅ Logo pro et plus grand
-$pdf->Image('../assets/images/logo.png', 10, 10, 50); // 50 = largeur
+$pdf->Image('../assets/images/logo.png', 10, 10, 50); 
 
 $pdf->SetFont('Arial', 'B', 16);
 $pdf->Cell(0, 10, encode("Facture liée au devis #" . $quote['id'] . " - Business Care"), 0, 1, 'C');
 $pdf->Ln(25);
 
-// Ligne décorative
 $pdf->SetDrawColor(255, 152, 0);
 $pdf->SetLineWidth(0.8);
 $pdf->Line(10, $pdf->GetY(), 200, $pdf->GetY());
@@ -79,9 +73,7 @@ $pdf->Cell(60, 10, encode("Montant par salarié :"), 0, 0);
 $pdf->Cell(60, 10, encode(number_format($quote['price_per_employee'], 2) . " €"), 0, 1);
 $pdf->Ln(20);
 
-// Remerciements
 $pdf->SetFont('Arial', 'I', 11);
 $pdf->Cell(0, 10, encode("Merci pour votre confiance. Pour toute question, contactez notre support."), 0, 1, 'C');
 
-// Affichage du PDF
 $pdf->Output("I", "Facture_Quote_" . $quote['id'] . ".pdf");

@@ -15,7 +15,6 @@ if (!isset($_GET['quote_id'])) {
 
 $quote_id = intval($_GET['quote_id']);
 
-// Vérifier que le devis appartient bien à l'utilisateur connecté
 $check = $conn->prepare("SELECT * FROM quotes WHERE id = ?");
 $check->bind_param("i", $quote_id);
 $check->execute();
@@ -27,20 +26,17 @@ if ($quote_result->num_rows === 0) {
 
 $quote = $quote_result->fetch_assoc();
 
-// Vérifier si la facture existe déjà
 $existing = $conn->prepare("SELECT id FROM invoices WHERE quote_id = ?");
 $existing->bind_param("i", $quote_id);
 $existing->execute();
 $existing_result = $existing->get_result();
 
 if ($existing_result->num_rows > 0) {
-    // Rediriger vers la page facture
     $invoice = $existing_result->fetch_assoc();
     header("Location: view_invoice.php?id=" . $invoice['id']);
     exit();
 }
 
-// Générer la facture
 $amount = $quote['price_per_employee'];
 
 $insert = $conn->prepare("INSERT INTO invoices (quote_id, user_id, amount) VALUES (?, ?, ?)");

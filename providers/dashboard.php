@@ -11,7 +11,6 @@ $supplier_id = $_SESSION['user_id'];
 $first_name = $_SESSION['first_name'];
 $last_name = $_SESSION['last_name'];
 
-// Récupération du nom de l'entreprise du fournisseur
 $stmt = $conn->prepare("SELECT company FROM users WHERE id = ?");
 $stmt->bind_param("i", $supplier_id);
 $stmt->execute();
@@ -19,7 +18,6 @@ $result = $stmt->get_result();
 $data = $result->fetch_assoc();
 $company = $data['company'];
 
-// Récupération des services liés à cette entreprise
 $services = $conn->prepare("SELECT * FROM services WHERE company = ?");
 $services->bind_param("s", $company);
 $services->execute();

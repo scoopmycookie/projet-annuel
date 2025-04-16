@@ -1,5 +1,4 @@
 <?php
-// messages.php
 session_start();
 require '../database/database.php';
 
@@ -10,12 +9,11 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'supplier') {
 
 $user_id = $_SESSION['user_id'];
 
-// Traitement de réponse au message
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reply_to'])) {
     $reply_to = $_POST['reply_to'];
     $message = $_POST['reply_message'];
     $sender_name = $_SESSION['first_name'] . ' ' . $_SESSION['last_name'];
-    $sender_email = 'fournisseur@businesscare.com'; // optionnel ou récupéré depuis utilisateur
+    $sender_email = 'fournisseur@businesscare.com'; 
     $sender_role = 'supplier';
     $subject = 'Réponse au message #' . $reply_to;
 

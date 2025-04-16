@@ -7,18 +7,15 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-// Activer le mode debug pour voir les erreurs
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Vérifier si l'ID est passé en paramètre
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     die("Aucune entreprise sélectionnée.");
 }
 
 $id = $_GET['id'];
 
-// Récupérer les informations de l'entreprise
 $stmt = $conn->prepare("SELECT * FROM companies WHERE id = ?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
@@ -30,7 +27,6 @@ if ($result->num_rows === 0) {
 
 $company = $result->fetch_assoc();
 
-// Vérifier si le formulaire a été soumis
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = $_POST['name'];
     $email = $_POST['email'];
@@ -38,12 +34,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $address = $_POST['address'];
     $status = $_POST['status'];
 
-    // Vérifier si tous les champs sont remplis
     if (empty($name) || empty($email) || empty($phone) || empty($address) || empty($status)) {
         die("Tous les champs sont obligatoires.");
     }
 
-    // Mettre à jour l'entreprise
     $update_stmt = $conn->prepare("UPDATE companies SET name=?, email=?, phone=?, address=?, status=? WHERE id=?");
     $update_stmt->bind_param("sssssi", $name, $email, $phone, $address, $status, $id);
 

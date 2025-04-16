@@ -7,14 +7,14 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-// Récupérer les entreprises depuis la base de données
+
 $companies = $conn->query("SELECT id, name FROM companies WHERE status = 'active'");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $company_id = $_POST['company_id'];
     $plan = $_POST['plan'];
 
-    // Prix automatique selon le plan
+    
     switch ($plan) {
         case 'starter':
             $price_per_employee = 180;

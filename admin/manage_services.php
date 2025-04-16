@@ -10,12 +10,10 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-// ✅ Mise à jour automatique des statuts selon les dates
 $conn->query("UPDATE services SET status = 'terminé' WHERE end_date < CURDATE() AND status != 'terminé'");
 $conn->query("UPDATE services SET status = 'en cours' WHERE start_date <= CURDATE() AND end_date >= CURDATE() AND status != 'en cours'");
 $conn->query("UPDATE services SET status = 'à venir' WHERE start_date > CURDATE() AND status != 'à venir'");
 
-// 📥 Récupération des services
 $stmt = $conn->prepare("SELECT * FROM services ORDER BY created_at DESC");
 $stmt->execute();
 $result = $stmt->get_result();
@@ -35,7 +33,6 @@ $result = $stmt->get_result();
 <main class="container">
     <h1>🛠 Gestion des services</h1>
 
-    <!-- ➕ Formulaire d'ajout -->
     <section class="form-container">
         <h2>Ajouter un nouveau service</h2>
         <form action="add_service.php" method="POST">
@@ -59,7 +56,6 @@ $result = $stmt->get_result();
         </form>
     </section>
 
-    <!-- 📋 Tableau des services -->
     <div class="table-container">
         <table>
             <thead>

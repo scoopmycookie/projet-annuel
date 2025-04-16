@@ -14,7 +14,6 @@ if (!isset($_GET['id'])) {
 
 $id = $_GET['id'];
 
-// Récupérer les données existantes
 $stmt = $conn->prepare("SELECT * FROM providers WHERE id = ?");
 $stmt->bind_param("i", $id);
 $stmt->execute();

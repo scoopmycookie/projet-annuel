@@ -4,7 +4,6 @@ require '../database/database.php';
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Vérifier l'authentification
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'client') {
     header("Location: ../public/login.php");
     exit();
@@ -12,7 +11,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'client') {
 
 $user_id = $_SESSION['user_id'];
 
-// Récupération du nom de l’entreprise du client
+
 $stmt = $conn->prepare("SELECT company FROM users WHERE id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();

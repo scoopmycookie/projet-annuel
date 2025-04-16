@@ -11,10 +11,8 @@ $client_id = $_SESSION['user_id'];
 $first_name = $_SESSION['first_name'];
 $last_name = $_SESSION['last_name'];
 
-// Récupérer les providers
 $providers = $conn->query("SELECT id, name FROM providers");
 
-// Envoi d'un message
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $destinataire_id = $_POST['destinataire_id'];
     $destinataire_type = $_POST['destinataire_type'];

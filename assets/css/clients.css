@@ -1,4 +1,3 @@
-/* ==== Global ==== */
 body {
     font-family: 'Segoe UI', sans-serif;
     margin: 0;
@@ -13,7 +12,6 @@ body {
     padding: 20px;
 }
 
-/* ==== Header ==== */
 header {
     background-color: #004d40;
     color: white;
@@ -55,7 +53,6 @@ header nav ul li a:hover {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* ==== Footer ==== */
 footer {
     background-color: #263238;
     color: #ccc;
@@ -83,7 +80,6 @@ footer nav ul li a:hover {
     color: #ff9800;
 }
 
-/* ==== Buttons ==== */
 .btn {
     display: inline-block;
     padding: 10px 20px;
@@ -126,7 +122,6 @@ footer nav ul li a:hover {
     background: #2e7d32;
 }
 
-/* ==== Tables ==== */
 .table-container {
     overflow-x: auto;
     margin-top: 20px;
@@ -156,7 +151,6 @@ tr:nth-child(even) {
     background-color: #f5f5f5;
 }
 
-/* ==== Forms ==== */
 form {
     background: white;
     padding: 25px;
@@ -186,7 +180,6 @@ form button {
     width: 100%;
 }
 
-/* ==== Messages ==== */
 .success-msg {
     background: #d4edda;
     color: #155724;

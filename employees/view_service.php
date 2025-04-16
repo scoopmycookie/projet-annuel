@@ -4,13 +4,11 @@ require '../database/database.php';
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// ✅ Vérification de l'accès
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'employee') {
     header("Location: ../public/login.php");
     exit();
 }
 
-// ✅ Vérifie que l'ID du fournisseur est passé dans l'URL
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     header("Location: services.php");
     exit();
@@ -18,7 +16,6 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 
 $provider_id = intval($_GET['id']);
 
-// 🔍 Récupère les données du fournisseur
 $stmt = $conn->prepare("SELECT * FROM providers WHERE id = ? AND is_verified = 1");
 $stmt->bind_param("i", $provider_id);
 $stmt->execute();

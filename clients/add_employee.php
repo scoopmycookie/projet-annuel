@@ -4,7 +4,7 @@ require '../database/database.php';
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// ✅ Vérifie que l'utilisateur est un client connecté
+//  Vérifie que l'utilisateur est un client connecté
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'client') {
     header("Location: ../public/login.php");
     exit();
@@ -12,7 +12,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'client') {
 
 $client_id = $_SESSION['user_id'];
 
-// 🔍 Récupération de l’ID de l’entreprise liée à ce client
+//  Récupération de l’ID de l’entreprise liée à ce client
 $stmt = $conn->prepare("SELECT company FROM users WHERE id = ?");
 $stmt->bind_param("i", $client_id);
 $stmt->execute();
@@ -24,7 +24,7 @@ if (!$company_id) {
     die("⚠️ Erreur : vous n’êtes lié à aucune entreprise. Contactez un administrateur.");
 }
 
-// ✅ Traitement du formulaire d’ajout
+// Traitement du formulaire d’ajout
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $first_name = $_POST['first_name'] ?? '';
     $last_name = $_POST['last_name'] ?? '';
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $address = $_POST['address'] ?? '';
     $gender = $_POST['gender'] ?? '';
 
-    // 🧠 Vérifie que l'email n'existe pas déjà
+    //  Vérifie que l'email n'existe pas déjà
     $check = $conn->prepare("SELECT id FROM users WHERE email = ?");
     $check->bind_param("s", $email);
     $check->execute();
@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($check_result->num_rows > 0) {
         $error = "❌ Cet email est déjà utilisé.";
     } else {
-        // ✅ Insertion du collaborateur
+        // Insertion du collaborateur
         $insert = $conn->prepare("INSERT INTO users (
             first_name, last_name, email, password, phone, address, gender, role, company, status, created_at
         ) VALUES (?, ?, ?, ?, ?, ?, ?, 'employee', ?, 'active', NOW())");

@@ -33,7 +33,11 @@ $service->bind_param("i", $id);
 $service->execute();
 $data = $service->get_result()->fetch_assoc();
 ?>
-
+<head>
+    <meta charset="UTF-8">
+    <title>Mes Services</title>
+    <link rel="stylesheet" href="../assets/css/providers.css">
+</head>
 <form action="" method="POST">
     <input type="text" name="title" value="<?= htmlspecialchars($data['title']) ?>" required>
     <textarea name="description" required><?= htmlspecialchars($data['description']) ?></textarea>

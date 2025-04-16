@@ -19,19 +19,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $company_name = $_POST['company_name'] ?? '';
     $siret_number = $_POST['siret_number'] ?? '';
     $gender = $_POST['gender'] ?? '';
+    $description = "Fournisseur inscrit"; 
 
     if (!$first_name || !$last_name || !$email || !$password || !$role) {
         $error = "Veuillez remplir tous les champs obligatoires.";
     }
 
     if ($role === 'user' && (!$company_name || !$siret_number)) {
-        $error = "Veuillez renseigner le nom de l'entreprise et le SIRET.";
+        $error = "Veuillez renseigner le nom de l'entreprise et le numéro SIRET.";
     }
 
     if (!$error) {
         $check = $conn->prepare("SELECT id FROM users WHERE email = ?");
         if (!$check) die("Erreur préparation : " . $conn->error);
-
         $check->bind_param("s", $email);
         $check->execute();
         $check_result = $check->get_result();
@@ -68,6 +68,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     $company_stmt->bind_param("ssss", $company_name, $address, $email, $phone);
                     $company_stmt->execute();
+                }
+
+                if ($role === 'supplier') {
+                    $provider_stmt = $conn->prepare("INSERT INTO providers 
+                        (name, email, phone, address, description, is_verified, gender) 
+                        VALUES (?, ?, ?, ?, ?, 0, ?)");
+
+                    if (!$provider_stmt) die("Erreur SQL (providers) : " . $conn->error);
+
+                    $full_name = $first_name . ' ' . $last_name;
+                    $provider_stmt->bind_param("ssssss", $full_name, $email, $phone, $address, $description, $gender);
+                    $provider_stmt->execute();
                 }
 
                 header("Location: /public/waiting-for-validation.php");

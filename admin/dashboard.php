@@ -11,17 +11,14 @@ $user_id = $_SESSION['user_id'];
 $first_name = $_SESSION['first_name'];
 $last_name = $_SESSION['last_name'];
 
-// Statistiques globales
 $total_users = $conn->query("SELECT COUNT(*) as total FROM users")->fetch_assoc()['total'];
 $total_companies = $conn->query("SELECT COUNT(*) as total FROM companies")->fetch_assoc()['total'];
 $total_quotes = $conn->query("SELECT COUNT(*) as total FROM quotes")->fetch_assoc()['total'];
 $total_services = $conn->query("SELECT COUNT(*) as total FROM services")->fetch_assoc()['total'];
 
-// Activités récentes
 $recent_users = $conn->query("SELECT first_name, last_name, role, created_at FROM users ORDER BY created_at DESC LIMIT 5");
 $recent_quotes = $conn->query("SELECT id, company, created_at FROM quotes ORDER BY created_at DESC LIMIT 5");
 
-// Entreprises et fournisseurs en attente de validation
 $pending_companies = $conn->query("SELECT id, name, email, created_at FROM companies WHERE is_verified = 0 ORDER BY created_at DESC");
 $pending_suppliers = $conn->query("SELECT id, name, email, created_at FROM providers WHERE is_verified = 0 ORDER BY created_at DESC");
 
@@ -123,7 +120,6 @@ $pending_suppliers = $conn->query("SELECT id, name, email, created_at FROM provi
     <h1>👋 Bienvenue, <?= htmlspecialchars($first_name . ' ' . $last_name) ?> !</h1>
     <p>Voici un aperçu global de votre espace d'administration.</p>
 
-    <!-- Statistiques -->
     <section class="stats-cards">
         <div class="card">
             <h3>👥 Utilisateurs</h3>
@@ -143,7 +139,6 @@ $pending_suppliers = $conn->query("SELECT id, name, email, created_at FROM provi
         </div>
     </section>
 
-    <!-- Activités récentes -->
     <section class="recent-activities">
         <h2>📌 Activités récentes</h2>
         <div class="activity-container">
@@ -174,7 +169,6 @@ $pending_suppliers = $conn->query("SELECT id, name, email, created_at FROM provi
         </div>
     </section>
 
-    <!-- Entreprises en attente de validation -->
     <section class="pending-section">
         <h2>🏢 Entreprises en attente de validation</h2>
         <table class="pending-table">
@@ -202,7 +196,6 @@ $pending_suppliers = $conn->query("SELECT id, name, email, created_at FROM provi
         </table>
     </section>
 
-    <!-- Fournisseurs en attente de validation -->
     <section class="pending-section">
         <h2>🧑‍💼 Fournisseurs en attente de validation</h2>
         <table class="pending-table">
@@ -221,8 +214,8 @@ $pending_suppliers = $conn->query("SELECT id, name, email, created_at FROM provi
                         <td><?= htmlspecialchars($supplier['email']) ?></td>
                         <td><?= date("d/m/Y", strtotime($supplier['created_at'])) ?></td>
                         <td>
-                            <a href="validate_supplier.php?id=<?= $supplier['id'] ?>" class="btn btn-green">Valider</a>
-                            <a href="delete_supplier.php?id=<?= $supplier['id'] ?>" class="btn btn-red">Supprimer</a>
+                            <a href="validate_providers.php?id=<?= $supplier['id'] ?>" class="btn btn-green">Valider</a>
+                            <a href="delete_providers.php?id=<?= $supplier['id'] ?>" class="btn btn-red">Supprimer</a>
                         </td>
                     </tr>
                 <?php endwhile; ?>
@@ -230,7 +223,6 @@ $pending_suppliers = $conn->query("SELECT id, name, email, created_at FROM provi
         </table>
     </section>
 
-    <!-- Planning -->
     <section class="planning">
         <h2>📅 Planning des événements</h2>
         <div class="calendar">

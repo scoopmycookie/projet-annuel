@@ -2,24 +2,20 @@
 session_start();
 require '../database/database.php';
 
-// Activer l'affichage des erreurs
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Vérifier si l'utilisateur est admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../public/login.php");
     exit();
 }
 
-// Vérifier si l'ID de l'utilisateur à modifier est fourni
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     die("Utilisateur non spécifié.");
 }
 
 $user_id = $_GET['id'];
 
-// Récupérer les informations de l'utilisateur
 $stmt = $conn->prepare("SELECT first_name, last_name, email, phone, address, company, role FROM users WHERE id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
@@ -31,9 +27,7 @@ if ($result->num_rows === 0) {
 
 $user = $result->fetch_assoc();
 
-// Traitement du formulaire de modification
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Vérifier si le formulaire a bien été soumis
     if (!isset($_POST['first_name'], $_POST['last_name'], $_POST['email'], $_POST['phone'], $_POST['address'], $_POST['company'], $_POST['role'])) {
         die("Tous les champs sont requis.");
     }
@@ -46,7 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $company = trim($_POST['company']);
     $role = $_POST['role'];
 
-    // Vérifier si l'email est déjà utilisé par un autre utilisateur
     $stmt = $conn->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
     $stmt->bind_param("si", $email, $user_id);
     $stmt->execute();
@@ -55,13 +48,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($check_email->num_rows > 0) {
         $error = "Cet email est déjà utilisé par un autre utilisateur.";
     } else {
-        // Mettre à jour les informations de l'utilisateur
         $stmt = $conn->prepare("UPDATE users SET first_name = ?, last_name = ?, email = ?, phone = ?, address = ?, company = ?, role = ? WHERE id = ?");
         $stmt->bind_param("sssssssi", $first_name, $last_name, $email, $phone, $address, $company, $role, $user_id);
 
         if ($stmt->execute()) {
             $success = "Utilisateur mis à jour avec succès.";
-            // Rediriger vers la page de gestion des utilisateurs après la mise à jour
             header("Location: manage_users.php");
             exit();
         } else {

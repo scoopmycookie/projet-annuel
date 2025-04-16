@@ -42,8 +42,8 @@ $services->bind_param("s", $company);
 $services->execute();
 $services_result = $services->get_result();
 
-// Factures (prévu pour extension future)
-$invoices = []; // Remplace avec ta logique plus tard
+
+$invoices = []; 
 ?>
 
 <!DOCTYPE html>

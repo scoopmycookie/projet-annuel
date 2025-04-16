@@ -2,7 +2,6 @@
 session_start();
 require '../database/database.php';
 
-// Vérifier si l'utilisateur est un admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../public/login.php");
     exit();
@@ -24,7 +23,6 @@ $companies = $conn->query("SELECT * FROM companies ORDER BY created_at DESC");
 <main class="container">
     <h1>🏢 Gestion des entreprises</h1>
 
-    <!-- Formulaire d'ajout -->
     <section class="form-container">
         <h2>➕ Ajouter une entreprise</h2>
         <form action="add_company.php" method="POST">
@@ -36,7 +34,6 @@ $companies = $conn->query("SELECT * FROM companies ORDER BY created_at DESC");
         </form>
     </section>
 
-    <!-- Liste des entreprises -->
     <div class="table-container">
         <h2>📋 Liste des entreprises</h2>
         <table>
@@ -63,17 +60,14 @@ $companies = $conn->query("SELECT * FROM companies ORDER BY created_at DESC");
                             <span class="status-<?= $company['status'] ?>"><?= ucfirst($company['status']) ?></span>
                         </td>
                         <td>
-                            <!-- Affichage du statut de validation -->
                             <span class="status-<?= $company['is_verified'] ? 'verified' : 'unverified' ?>">
                                 <?= $company['is_verified'] ? 'Validée' : 'Non validée' ?>
                             </span>
                         </td>
                         <td><?= date("d/m/Y", strtotime($company['created_at'])) ?></td>
                         <td class="action-buttons">
-                            <!-- Modifier -->
                             <a href="edit_company.php?id=<?= $company['id'] ?>" class="btn btn-orange">Modifier</a>
 
-                            <!-- Archiver / Désarchiver -->
                             <?php if ($company['status'] === 'archived'): ?>
                                 <a href="unarchive_company.php?id=<?= $company['id'] ?>" class="btn btn-green">Désarchiver</a>
                             <?php elseif ($company['status'] === 'banned'): ?>
@@ -83,14 +77,13 @@ $companies = $conn->query("SELECT * FROM companies ORDER BY created_at DESC");
                                 <a href="ban_company.php?id=<?= $company['id'] ?>" class="btn btn-darkred" onclick="return confirm('Bannir cette entreprise ?')">Bannir</a>
                             <?php endif; ?>
 
-                            <!-- Validation / Invalidation -->
                             <?php if ($company['is_verified'] == 0): ?>
                                 <a href="validate_company.php?id=<?= $company['id'] ?>&action=approve" class="btn btn-green">Valider</a>
                             <?php else: ?>
                                 <a href="validate_company.php?id=<?= $company['id'] ?>&action=reject" class="btn btn-red">Invalider</a>
                             <?php endif; ?>
 
-                            <!-- Supprimer -->
+                            
                             <a href="delete_company.php?id=<?= $company['id'] ?>" class="btn btn-red" onclick="return confirm('Supprimer cette entreprise ?')">Supprimer</a>
                         </td>
                     </tr>

@@ -4,7 +4,7 @@ require '../database/database.php';
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// 🔐 Vérifie que l'utilisateur est un employé
+
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'employee') {
     header("Location: ../public/login.php");
     exit();
@@ -14,7 +14,7 @@ $user_id = $_SESSION['user_id'];
 $first_name = $_SESSION['first_name'];
 $last_name = $_SESSION['last_name'];
 
-// 🔍 Récupérer le nom de l’entreprise de l’employé
+
 $stmt = $conn->prepare("
     SELECT companies.name AS company_name
     FROM users 

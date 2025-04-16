@@ -2,7 +2,6 @@
 session_start();
 require '../database/database.php';
 
-// Vérification que l'utilisateur est bien un client connecté
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'client') {
     header("Location: ../public/login.php");
     exit();
@@ -10,7 +9,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'client') {
 
 $client_id = $_SESSION['user_id'];
 
-// Récupération de la société du client
 $stmt = $conn->prepare("SELECT company FROM users WHERE id = ?");
 $stmt->bind_param("i", $client_id);
 $stmt->execute();
@@ -18,7 +16,6 @@ $res = $stmt->get_result();
 $data = $res->fetch_assoc();
 $company = $data['company'];
 
-// Récupération des services liés à cette entreprise
 $services = $conn->prepare("SELECT title, description, status, start_date, end_date FROM services WHERE company = ? ORDER BY start_date DESC");
 $services->bind_param("s", $company);
 $services->execute();

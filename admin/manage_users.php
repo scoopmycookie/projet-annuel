@@ -10,7 +10,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-// Traitement formulaire d'ajout
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_user'])) {
     $first_name = $_POST['first_name'];
     $last_name  = $_POST['last_name'];
@@ -37,7 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_user'])) {
     }
 }
 
-// Récupération des utilisateurs
 $stmt = $conn->prepare("SELECT id, first_name, last_name, email, phone, address, gender, role, company, status, created_at FROM users ORDER BY id DESC");
 $stmt->execute();
 $result = $stmt->get_result();
@@ -64,7 +62,6 @@ $result = $stmt->get_result();
         <p class="error-msg"><?= $error ?></p>
     <?php endif; ?>
 
-    <!-- Formulaire d'ajout -->
     <section class="form-container">
         <h2>➕ Ajouter un utilisateur</h2>
         <form method="POST">
@@ -96,7 +93,6 @@ $result = $stmt->get_result();
         </form>
     </section>
 
-    <!-- Liste des utilisateurs -->
     <div class="table-container">
         <table>
             <thead>

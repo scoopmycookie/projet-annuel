@@ -2,7 +2,6 @@
 session_start();
 require '../database/database.php';
 
-// Vérifier si l'utilisateur est un admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../public/login.php");
     exit();
@@ -12,7 +11,6 @@ if (isset($_GET['id']) && isset($_GET['action'])) {
     $company_id = $_GET['id'];
     $action = $_GET['action'];
 
-    // Approuver ou rejeter l'entreprise
     if ($action == 'approve') {
         $stmt = $conn->prepare("UPDATE companies SET is_verified = 1 WHERE id = ?");
         $stmt->bind_param("i", $company_id);

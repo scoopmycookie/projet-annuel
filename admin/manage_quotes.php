@@ -7,7 +7,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-// Traitement de la création
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $company_id = $_POST['company'];
     $plan = $_POST['plan'];
@@ -26,7 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit();
 }
 
-// Données à afficher
 $companies = $conn->query("SELECT id, name FROM companies ORDER BY name");
 $quotes = $conn->query("
     SELECT q.*, c.name AS company_name 

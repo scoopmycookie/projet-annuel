@@ -2,30 +2,24 @@
 session_start();
 require '../database/database.php';
 
-// Vérifier si l'utilisateur est connecté
 if (!isset($_SESSION['user_id'])) {
     header("Location: /public/login.php");
     exit();
 }
 
-// Initialiser les variables
 $error = $success = '';
 
-// Traitement du formulaire de contact
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nom = $_POST['nom'];
     $email = $_POST['email'];
     $sujet = $_POST['sujet'];
     $message = $_POST['message'];
 
-    // Vérifier que tous les champs sont remplis
     if (empty($nom) || empty($email) || empty($sujet) || empty($message)) {
         $error = "Tous les champs doivent être remplis.";
     } else {
-        // Insérer le message dans la base de données
         $stmt = $conn->prepare("INSERT INTO messages (nom, email, sujet, message, sender_role, destinataire_id, destinataire_type) 
-            VALUES (?, ?, ?, ?, 'client', 1, 'admin')");  // `1` ici représente l'ID de l'admin, ajustez-le si nécessaire
-
+            VALUES (?, ?, ?, ?, 'client', 1, 'admin')");  
         $stmt->bind_param("ssss", $nom, $email, $sujet, $message);
 
         if ($stmt->execute()) {
@@ -58,7 +52,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <section class="contact-form">
         <div class="container">
-            <!-- Affichage des messages d'erreur ou de succès -->
             <?php if ($error): ?>
                 <p class="error-msg"><?= htmlspecialchars($error) ?></p>
             <?php endif; ?>
@@ -66,7 +59,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <p class="success-msg"><?= htmlspecialchars($success) ?></p>
             <?php endif; ?>
 
-            <!-- Formulaire de contact -->
             <form action="submit_contact.php" method="POST">
                 <label for="nom">Nom</label>
                 <input type="text" id="nom" name="nom" required>

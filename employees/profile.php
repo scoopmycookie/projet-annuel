@@ -4,7 +4,6 @@ require '../database/database.php';
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// ✅ Vérifie que l'utilisateur est un employé connecté
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'employee') {
     header("Location: ../public/login.php");
     exit();
@@ -12,7 +11,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'employee') {
 
 $user_id = $_SESSION['user_id'];
 
-// 🔍 Récupère les données de l'employé
 $stmt = $conn->prepare("SELECT u.*, c.name AS company_name 
                         FROM users u
                         LEFT JOIN companies c ON u.company = c.id
@@ -22,7 +20,6 @@ $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
-// Traitement du formulaire de mise à jour
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $first_name = $_POST['first_name'] ?? '';
     $last_name = $_POST['last_name'] ?? '';
@@ -31,7 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $gender = $_POST['gender'] ?? '';
     $password = $_POST['password'] ?? '';
 
-    // Mise à jour de base
     if (!empty($password)) {
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         $update = $conn->prepare("UPDATE users SET first_name = ?, last_name = ?, phone = ?, address = ?, gender = ?, password = ? WHERE id = ?");
@@ -98,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label>Entreprise</label>
         <input type="text" value="<?= htmlspecialchars($user['company_name']) ?>" disabled>
 
-        <button type="submit" class="btn btn-green">💾 Mettre à jour</button>
+        <button type="submit" class="btn btn-green"> Mettre à jour</button>
     </form>
 </main>
 

@@ -7,7 +7,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-// Ajouter un fournisseur
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_provider'])) {
     $name = $_POST['name'];
     $email = $_POST['email'];
@@ -23,7 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_provider'])) {
     exit();
 }
 
-// Supprimer un fournisseur
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
     $stmt = $conn->prepare("DELETE FROM providers WHERE id = ?");
@@ -33,7 +31,6 @@ if (isset($_GET['delete'])) {
     exit();
 }
 
-// Valider un fournisseur
 if (isset($_GET['validate'])) {
     $id = $_GET['validate'];
     $stmt = $conn->prepare("UPDATE providers SET is_verified = 1 WHERE id = ?");
@@ -43,7 +40,6 @@ if (isset($_GET['validate'])) {
     exit();
 }
 
-// Archiver un fournisseur
 if (isset($_GET['archive'])) {
     $id = $_GET['archive'];
     $stmt = $conn->prepare("UPDATE providers SET is_verified = 0 WHERE id = ?");
@@ -53,7 +49,6 @@ if (isset($_GET['archive'])) {
     exit();
 }
 
-// Récupérer les fournisseurs
 $providers = $conn->query("SELECT * FROM providers ORDER BY created_at DESC");
 ?>
 

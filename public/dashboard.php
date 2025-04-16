@@ -1,59 +1,84 @@
 <?php
 session_start();
-require '../database/database.php';
-
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit();
-}
-
-$user_id = $_SESSION['user_id'];
-$role = $_SESSION['role'];
-
-$stmt = $conn->prepare("SELECT first_name, last_name, email, role, phone, address, company, gender FROM users WHERE id = ?");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
-
-if (!$user) {
-    die("Erreur : Utilisateur introuvable.");
-}
+$user_logged = isset($_SESSION['user_id']);
+$first_name = $user_logged ? $_SESSION['first_name'] : null;
+$last_name  = $user_logged ? $_SESSION['last_name']  : null;
+$role       = $user_logged ? $_SESSION['role'] : 'visiteur';
 ?>
 
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Business Care</title>
     <link rel="stylesheet" href="../assets/css/public.css">
+    <style>
+        .dashboard-welcome {
+            text-align: center;
+            background: #f1f1f1;
+            padding: 50px 20px;
+            border-radius: 10px;
+            margin-top: 40px;
+        }
+
+        .dashboard-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        .dashboard-actions a {
+            background-color: #28a745;
+            padding: 15px 30px;
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: 0.3s ease-in-out;
+        }
+
+        .dashboard-actions a:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+    </style>
 </head>
 <body>
-<?php include __DIR__ . '/../includes/header_public.php'; ?>
 
-    <main>
-        <section class="hero">
-            <div class="container">
-                <h1>Bienvenue, <?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?>!</h1>
-                <p>Rôle : <?php echo ucfirst($user['role']); ?></p>
-            </div>
-        </section>
+<?php include '../includes/header_public.php'; ?>
 
-        <section class="dashboard-content">
-            <div class="container">
-                <h2>Informations du Compte</h2>
-                <p><strong>Email :</strong> <?php echo htmlspecialchars($user['email']); ?></p>
-                <p><strong>Téléphone :</strong> <?php echo htmlspecialchars($user['phone']); ?></p>
-                <p><strong>Adresse :</strong> <?php echo htmlspecialchars($user['address']); ?></p>
-                <p><strong>Entreprise :</strong> <?php echo htmlspecialchars($user['company'] ? $user['company'] : 'Non renseigné'); ?></p>
-                <p><strong>Genre :</strong> <?php echo htmlspecialchars($user['gender']); ?></p>
+<main class="container">
 
-                <a href="logout.php" class="btn">Se Déconnecter</a>
-            </div>
-        </section>
-    </main>
+    <section class="dashboard-welcome">
+        <h1>
+            👋 Bienvenue
+            <?= $user_logged ? htmlspecialchars($first_name . ' ' . $last_name) : 'sur votre tableau de bord' ?> !
+        </h1>
+        <p>
+            <?= $user_logged
+                ? "Vous êtes connecté en tant que <strong>$role</strong>."
+                : "Connectez-vous ou explorez nos services pour votre entreprise." ?>
+        </p>
+    </section>
 
-    <?php include '../includes/footer_public.php'; ?>
+    <section class="dashboard-actions">
+        <a href="services.php">🛠 Voir les services</a>
+        <?php if ($user_logged): ?>
+            <a href="profile.php">👤 Mon profil</a>
+            <a href="logout.php">🚪 Se déconnecter</a>
+        <?php else: ?>
+            <a href="login.php">🔐 Se connecter</a>
+            <a href="register.php">📝 Créer un compte</a>
+        <?php endif; ?>
+        <a href="contact.php">📩 Nous contacter</a>
+    </section>
+
+</main>
+
+<?php include '../includes/footer_public.php'; ?>
+
 </body>
 </html>

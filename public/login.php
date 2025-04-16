@@ -4,7 +4,6 @@ require '../database/database.php';
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Redirection si l'utilisateur est déjà connecté
 if (isset($_SESSION['user_id'])) {
     header("Location: dashboard.php");
     exit();
@@ -27,13 +26,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($result && $result->num_rows === 1) {
         $user = $result->fetch_assoc();
 
-        // Vérification du statut
         if ($user['status'] === 'archived') {
             $error = "Votre compte est archivé. Contactez l'administration.";
         } elseif ($user['status'] === 'banned') {
             $error = "Votre compte a été banni.";
         } elseif (password_verify($password, $user['password'])) {
-            // Connexion réussie
+
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['first_name'] = $user['first_name'];
             $_SESSION['last_name'] = $user['last_name'];
@@ -50,6 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 case 'client':
                     header("Location: /clients/dashboard.php");
                     break;
+                    case 'supplier':
+                        header("Location: /providers/dashboard.php");
+                        break;
                 default:
                     header("Location: /public/dashboard.php");
                     break;

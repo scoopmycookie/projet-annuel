@@ -4,7 +4,6 @@ require '../database/database.php';
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Vérification du rôle
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'client') {
     header("Location: ../public/login.php");
     exit();
@@ -14,7 +13,6 @@ $client_id = $_SESSION['user_id'];
 $first_name = $_SESSION['first_name'];
 $last_name = $_SESSION['last_name'];
 
-// Récupération de l'entreprise
 $stmt = $conn->prepare("SELECT company FROM users WHERE id = ?");
 $stmt->bind_param("i", $client_id);
 $stmt->execute();
@@ -22,7 +20,7 @@ $res = $stmt->get_result();
 $data = $res->fetch_assoc();
 $company = $data['company'];
 
-// Récupération des collaborateurs
+
 $collab_stmt = $conn->prepare("SELECT * FROM users WHERE company = ? AND role = 'employee'");
 $collab_stmt->bind_param("s", $company);
 $collab_stmt->execute();
