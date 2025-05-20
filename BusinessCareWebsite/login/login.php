@@ -5,7 +5,8 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 require_once '../includes/db.php';
-session_start();
+require_once '../includes/header.php';
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'] ?? '';
@@ -53,12 +54,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <title>Connexion - Business Care</title>
     <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+  html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  main {
+    flex: 1;
+  }
+</style>
 </head>
 <body>
 
-<header>
-    <h1>Connexion</h1>
-</header>
+<h1>Connexion</h1>
+
 
 <main class="form-section">
     <?php if (!empty($error)): ?>
@@ -72,9 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
 </main>
 
-<footer>
-    <p>&copy; 2025 Business Care</p>
-</footer>
-
 </body>
+
 </html>
+<?require_once '../includes/footer.php';

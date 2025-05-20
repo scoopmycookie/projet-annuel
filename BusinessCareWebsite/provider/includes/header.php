@@ -18,11 +18,14 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'provider') {
 <body>
 
 <header>
+<img src="../assets/img/logo-businesscare.png" alt="Logo Business Care" style="height: 60px;">
+
     <h1>Tableau de bord Prestataire</h1>
     <nav>
         <ul style="display: flex; justify-content: center; gap: 30px; list-style: none; margin: 20px 0;">
             <li><a href="../provider/dashboard.php">Accueil</a></li>
             <li><a href="../provider/services.php">Mes Services</a></li>
+            <li><a href="../provider/provider_availability.php">Rendez-vous</a></li>
             <li><a href="../provider/factures.php">Factures</a></li>
             <li><a href="../provider/payer.php">Paiement</a></li>
             <li><a href="../login/logout.php" style="color: red;">Déconnexion</a></li>

@@ -1,110 +1,161 @@
 <?php
 require_once '../includes/db.php';
-include 'includes/header.php';
 
-if (isset($_GET['archive_user'])) {
-    $userId = (int) $_GET['archive_user'];
-    $pdo->prepare("UPDATE users SET status = 'archived' WHERE id = ?")->execute([$userId]);
+if (isset($_GET['delete'])) {
+    $id = (int)$_GET['delete'];
+    $pdo->prepare("DELETE FROM companies WHERE id = ?")->execute([$id]);
     header("Location: companies.php");
     exit;
 }
 
-$companies = $pdo->query("SELECT * FROM companies ORDER BY name ASC")->fetchAll();
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $data = [
+        $_POST['name'], $_POST['siret'], $_POST['industry'], $_POST['email'], $_POST['phone'],
+        $_POST['website'], $_POST['address_street'], $_POST['address_city'], $_POST['address_postal_code'],
+        $_POST['address_country'], $_POST['representative_name'], $_POST['employees']
+    ];
+
+    if (!empty($_POST['id'])) {
+        $data[] = $_POST['id'];
+        $pdo->prepare("UPDATE companies SET name=?, siret=?, industry=?, email=?, phone=?, website=?, address_street=?, address_city=?, address_postal_code=?, address_country=?, representative_name=?, employees=? WHERE id=?")->execute($data);
+    } else {
+        // Insertion
+        $pdo->prepare("INSERT INTO companies (name, siret, industry, email, phone, website, address_street, address_city, address_postal_code, address_country, representative_name, employees) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")->execute($data);
+    }
+    header("Location: companies.php");
+    exit;
+}
+
+// Formulaire prérempli si ?edit=ID
+$editCompany = null;
+if (isset($_GET['edit'])) {
+    $stmt = $pdo->prepare("SELECT * FROM companies WHERE id = ?");
+    $stmt->execute([(int)$_GET['edit']]);
+    $editCompany = $stmt->fetch();
+}
+
+// Liste des sociétés
+$companies = $pdo->query("SELECT * FROM companies ORDER BY created_at DESC")->fetchAll();
+
+// Rendu HTML
+include 'includes/header.php';
 ?>
 
-<section class="form-section">
-    <h2>Liste des entreprises</h2>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f9f9f9;
+        margin: 20px;
+    }
+    h2 {
+        color: #333;
+        margin-bottom: 20px;
+    }
+    form {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    }
+    form input, form button {
+        display: block;
+        width: 100%;
+        margin: 8px 0;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+    }
+    form button {
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+        border: none;
+        transition: background-color 0.3s;
+    }
+    form button:hover {
+        background-color: #0056b3;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    }
+    table th, table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    table th {
+        background-color: #f4f4f4;
+    }
+    table tr:hover {
+        background-color: #f1f1f1;
+    }
+    a {
+        color: #007bff;
+        text-decoration: none;
+    }
+    a:hover {
+        text-decoration: underline;
+    }
+    details {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        padding: 10px;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+    summary {
+        font-weight: bold;
+        cursor: pointer;
+    }
+</style>
 
-    <?php if (empty($companies)): ?>
-        <p>Aucune entreprise enregistrée.</p>
-    <?php else: ?>
-        <input type="text" id="employeeSearch" placeholder="Rechercher un employé..." style="width:100%; padding:10px; margin-bottom:20px; border:1px solid #ccc; border-radius:5px;">
+<h2>Gestion des sociétés</h2>
+<form method="POST" style="margin-bottom:40px; max-width: 600px;">
+    <input type="hidden" name="id" value="<?= $editCompany['id'] ?? '' ?>">
+    <input type="text" name="name" placeholder="Nom" value="<?= $editCompany['name'] ?? '' ?>" required>
+    <input type="text" name="siret" placeholder="SIRET" value="<?= $editCompany['siret'] ?? '' ?>">
+    <input type="text" name="industry" placeholder="Secteur" value="<?= $editCompany['industry'] ?? '' ?>">
+    <input type="email" name="email" placeholder="Email" value="<?= $editCompany['email'] ?? '' ?>" required>
+    <input type="text" name="phone" placeholder="Tél" value="<?= $editCompany['phone'] ?? '' ?>">
+    <input type="text" name="website" placeholder="Site web" value="<?= $editCompany['website'] ?? '' ?>">
+    <input type="text" name="address_street" placeholder="Rue" value="<?= $editCompany['address_street'] ?? '' ?>">
+    <input type="text" name="address_city" placeholder="Ville" value="<?= $editCompany['address_city'] ?? '' ?>">
+    <input type="text" name="address_postal_code" placeholder="Code postal" value="<?= $editCompany['address_postal_code'] ?? '' ?>">
+    <input type="text" name="address_country" placeholder="Pays" value="<?= $editCompany['address_country'] ?? '' ?>">
+    <input type="text" name="representative_name" placeholder="Représentant" value="<?= $editCompany['representative_name'] ?? '' ?>">
+    <input type="number" name="employees" placeholder="Nb salariés" value="<?= $editCompany['employees'] ?? 1 ?>" min="1">
+    <button type="submit"><?= $editCompany ? 'Mettre à jour' : 'Ajouter' ?> la société</button>
+</form>
 
-        <div id="companyList">
-            <?php foreach ($companies as $company): ?>
-                <?php
-                    $stmt = $pdo->prepare("SELECT id, name, email, role, status FROM users WHERE company_id = ?");
-                    $stmt->execute([$company['id']]);
-                    $employees = $stmt->fetchAll();
-                    $employee_count = count($employees);
-                ?>
-                <details class="company-block" style="margin-bottom: 15px; border: 1px solid #ddd; border-radius: 5px; padding: 10px;">
-                    <summary class="company-summary" style="cursor:pointer; font-weight:bold;">
-                        <?= htmlspecialchars($company['name']) ?> (SIRET : <?= htmlspecialchars($company['siret']) ?>)
-                        — <?= $employee_count ?> employé<?= $employee_count > 1 ? 's' : '' ?>
-                    </summary>
-                    <div style="margin-left: 20px; margin-top: 10px;">
-                        <p><strong>Email :</strong> <?= htmlspecialchars($company['email']) ?></p>
-                        <p><strong>Téléphone :</strong> <?= htmlspecialchars($company['phone']) ?></p>
-                        <p><strong>Adresse :</strong> <?= htmlspecialchars($company['address_street']) ?>, <?= htmlspecialchars($company['address_zip']) ?> <?= htmlspecialchars($company['address_city']) ?></p>
-                        <p><strong>Effectif déclaré :</strong> <?= htmlspecialchars($company['employees']) ?> salarié<?= $company['employees'] > 1 ? 's' : '' ?></p>
-                        <p><strong>Créée le :</strong> <?= htmlspecialchars($company['created_at'] ?? 'N/A') ?></p>
+<?php foreach ($companies as $company): ?>
+    <?php
+    $stmt = $pdo->prepare("SELECT name, email, role, status FROM users WHERE company_id = ?");
+    $stmt->execute([$company['id']]);
+    $employees = $stmt->fetchAll();
+    $count = count($employees);
+    ?>
+    <details>
+        <summary><?= htmlspecialchars($company['name']) ?> (<?= $count ?> employé<?= $count > 1 ? 's' : '' ?>)</summary>
+        <p><strong>Email :</strong> <?= htmlspecialchars($company['email']) ?></p>
+        <p><strong>SIRET :</strong> <?= htmlspecialchars($company['siret']) ?></p>
+        <p><strong>Nb salariés :</strong> <?= htmlspecialchars($company['employees']) ?></p>
+        <p><a href="?edit=<?= $company['id'] ?>">Modifier</a> | <a href="?delete=<?= $company['id'] ?>" onclick="return confirm('Supprimer cette société ?')">Supprimer</a> | <a href="companies_contracts.php?company_id=<?= $company['id'] ?>">Contrats</a></p>
 
-                        <h4>Employés :</h4>
-                        <?php
-                        $grouped = ['client' => [], 'employee' => [], 'provider' => [], 'other' => []];
-                        foreach ($employees as $emp) {
-                            $role = in_array($emp['role'], ['client', 'employee', 'provider']) ? $emp['role'] : 'other';
-                            $grouped[$role][] = $emp;
-                        }
-
-                        $roleLabels = ['client' => 'Clients', 'employee' => 'Employés', 'provider' => 'Prestataires', 'other' => 'Autres'];
-                        $roleColors = ['client' => '#e3f2fd', 'employee' => '#e8f5e9', 'provider' => '#fff3e0', 'other' => '#f3e5f5'];
-                        ?>
-
-                        <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-top: 10px;">
-                            <?php foreach ($grouped as $role => $group): ?>
-                                <?php if (!empty($group)): ?>
-                                    <div style="background: <?= $roleColors[$role] ?>; padding: 15px; border-radius: 8px; flex: 1 1 300px;">
-                                        <h5 style="margin-bottom: 10px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">
-                                            <?= $roleLabels[$role] ?>
-                                        </h5>
-                                        <ul style="list-style-type: none; padding-left: 0;">
-                                            <?php foreach ($group as $emp): ?>
-                                                <li style="margin-bottom: 8px;">
-                                                    <strong><?= htmlspecialchars($emp['name']) ?></strong>
-                                                    (<a href="mailto:<?= htmlspecialchars($emp['email']) ?>"><?= htmlspecialchars($emp['email']) ?></a>)
-                                                    — <span style="font-size: 0.9em; color: <?= $emp['status'] === 'archived' ? '#999' : '#28a745' ?>;">
-                                                        <?= htmlspecialchars($emp['status']) ?>
-                                                    </span>
-                                                    <?php if ($emp['status'] !== 'archived'): ?>
-                                                        | <a href="?archive_user=<?= $emp['id'] ?>" onclick="return confirm('Archiver cet employé ?');" style="color: #c00;">Archiver</a>
-                                                    <?php else: ?>
-                                                        | <span style="color: #999;">Archivé</span>
-                                                    <?php endif; ?>
-                                                </li>
-                                            <?php endforeach; ?>
-                                        </ul>
-                                    </div>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-                </details>
+        <h4>Employés :</h4>
+        <ul>
+            <?php foreach ($employees as $emp): ?>
+                <li><strong><?= htmlspecialchars($emp['name']) ?></strong> (<?= htmlspecialchars($emp['role']) ?>) - <?= htmlspecialchars($emp['email']) ?> [<?= htmlspecialchars($emp['status']) ?>]</li>
             <?php endforeach; ?>
-        </div>
-    <?php endif; ?>
-</section>
-
-<script>
-document.getElementById('employeeSearch').addEventListener('keyup', function () {
-    const query = this.value.toLowerCase();
-    const blocks = document.querySelectorAll('.company-block');
-
-    blocks.forEach(block => {
-        const items = block.querySelectorAll('li');
-        let match = false;
-
-        items.forEach(item => {
-            const text = item.textContent.toLowerCase();
-            const isVisible = text.includes(query);
-            item.style.display = isVisible ? 'list-item' : 'none';
-            if (isVisible) match = true;
-        });
-
-        block.style.display = match ? 'block' : 'none';
-    });
-});
-</script>
+        </ul>
+    </details>
+<?php endforeach; ?>
 
 <?php include 'includes/footer.php'; ?>

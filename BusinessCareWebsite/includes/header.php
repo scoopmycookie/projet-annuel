@@ -4,6 +4,30 @@ session_start();
 ?>
 <?php include 'chatbot.php'; ?>
 
+<?php
+if (!isset($_SESSION)) session_start();
+
+// Détection de la langue via l'URL
+if (isset($_GET['lang']) && in_array($_GET['lang'], ['fr', 'en', 'es'])) {
+    $_SESSION['lang'] = $_GET['lang'];
+}
+
+// Langue par défaut
+$lang = $_SESSION['lang'] ?? 'fr';
+
+// Charger les traductions
+$lang_file = __DIR__ . '/../lang/' . $lang . '.php';
+$trans = file_exists($lang_file) ? include($lang_file) : include(__DIR__ . '/../lang/fr.php');
+?>
+<?php
+function t($key) {
+    global $trans;
+    return $trans[$key] ?? $key;
+}
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -13,6 +37,8 @@ session_start();
 </head>
 <body>
 <header>
+<img src="../assets/img/logo-businesscare.png" alt="Logo Business Care" style="height: 60px;">
+
     <h1>Bienvenue chez Business Care</h1>
     <nav>
         <ul>

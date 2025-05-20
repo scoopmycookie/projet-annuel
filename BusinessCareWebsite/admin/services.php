@@ -15,21 +15,26 @@ if (isset($_GET['delete'])) {
     exit;
 }
 
-// Ajouter un service
+// Ajouter un service (seulement si date >= aujourd'hui)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $stmt = $pdo->prepare("INSERT INTO services (title, service_date, service_time, price, capacity, duration, description, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->execute([
-        $_POST['title'],
-        $_POST['date'],
-        $_POST['time'],
-        $_POST['price'],
-        $_POST['capacity'],
-        $_POST['duration'],
-        $_POST['description'],
-        $_POST['category']
-    ]);
-    header("Location: services.php?month=$month&year=$year");
-    exit;
+    $selectedDate = $_POST['date'];
+    if (strtotime($selectedDate) >= strtotime(date('Y-m-d'))) {
+        $stmt = $pdo->prepare("INSERT INTO services (title, service_date, service_time, price, capacity, duration, description, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([
+            $_POST['title'],
+            $_POST['date'],
+            $_POST['time'],
+            $_POST['price'],
+            $_POST['capacity'],
+            $_POST['duration'],
+            $_POST['description'],
+            $_POST['category']
+        ]);
+        header("Location: services.php?month=$month&year=$year");
+        exit;
+    } else {
+        echo "<script>alert('Impossible d\'ajouter un service à une date passée.');</script>";
+    }
 }
 
 $stmt = $pdo->prepare("SELECT * FROM services WHERE MONTH(service_date) = ? AND YEAR(service_date) = ?");

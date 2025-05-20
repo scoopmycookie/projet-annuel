@@ -17,6 +17,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 </head>
 <body>
 <header>
+<img src="../assets/img/logo-businesscare.png" alt="Logo Business Care" style="height: 60px;">
+
     <h1>Espace Administrateur</h1>
     <nav>
         <ul>
@@ -25,10 +27,10 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
             <li><a href="../admin/messages.php">Messages</a></li>
             <li><a href="../admin/users.php">Utilisateurs</a></li>
             <li><a href="../admin/companies.php">Entreprises</a></li>
+            <li><a href="../admin/admin_community.php">communauté</a></li>
             <li><a href="../admin/services.php">Services</a></li>
             <li><a href="../admin/invoices.php">Factures</a></li>
             <li><a href="../admin/quotes.php">Deviss</a></li>
-
             <li><a href="../login/logout.php" style="color: red;">Déconnexion</a></li>
         </ul>
     </nav>
