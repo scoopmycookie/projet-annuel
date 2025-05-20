@@ -5,7 +5,6 @@ include 'includes/header.php';
 $errors = [];
 $success = false;
 
-// Récupération des entreprises
 $companies = $pdo->query("SELECT id, name FROM companies ORDER BY name ASC")->fetchAll();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -13,7 +12,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $amount     = $_POST['amount'] ?? '';
     $due_date   = $_POST['due_date'] ?? null;
 
-    // Validation
     if ($company_id <= 0) $errors[] = "Entreprise invalide.";
     if (!is_numeric($amount) || $amount <= 0) $errors[] = "Montant invalide.";
     if (!empty($due_date) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $due_date)) $errors[] = "Date invalide.";

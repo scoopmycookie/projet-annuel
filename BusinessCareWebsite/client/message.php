@@ -4,7 +4,6 @@ include 'includes/header.php';
 
 $sender_id = $_SESSION['user_id'];
 
-// Récupérer l'ID de l'admin
 $stmt = $pdo->query("SELECT id FROM users WHERE role = 'admin' LIMIT 1");
 $admin = $stmt->fetch();
 $admin_id = $admin['id'] ?? null;
@@ -20,7 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $admin_id) {
     }
 }
 
-// Charger tous les messages entre le client et l'admin
 $conv = [];
 if ($admin_id) {
     $stmt = $pdo->prepare("SELECT m.*, u.name FROM messages m JOIN users u ON m.sender_id = u.id

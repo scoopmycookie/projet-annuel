@@ -13,7 +13,6 @@
     --accent: #0077b6;
 }
 
-/* Body */
 html, body {
     height: 100%;
     display: flex;
@@ -27,7 +26,6 @@ body {
     line-height: 1.6;
 }
 
-/* Header */
 header {
     background-color: var(--primary);
     color: white;
@@ -82,7 +80,6 @@ nav ul li a:hover {
     color: var(--dark);
 }
 
-/* Hero Section */
 .hero {
     background: url('https://images.unsplash.com/photo-1556740749-887f6717d7e4') no-repeat center center/cover;
     color: white;
@@ -123,7 +120,6 @@ nav ul li a:hover {
     background-color: #ffd60a;
 }
 
-/* Quote Form Section */
 .devis-section {
     padding: 60px 20px;
     background-color: #ffffff;
@@ -173,7 +169,6 @@ nav ul li a:hover {
     background-color: #023e8a;
 }
 
-/* Services Preview Section */
 .services-preview {
     background-color: var(--light);
     padding: 60px 20px;
@@ -217,7 +212,6 @@ footer {
     margin-top: auto;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .hero-content {
         padding: 20px;

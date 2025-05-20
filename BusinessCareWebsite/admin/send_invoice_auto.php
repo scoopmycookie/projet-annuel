@@ -3,7 +3,6 @@ require_once '../includes/db.php';
 require_once '../includes/fpdf.php';
 
 function sendContractInvoice($invoiceId, $pdo) {
-    // Vérifie si la facture a déjà été envoyée
     $check = $pdo->prepare("SELECT sent FROM invoices WHERE id = ?");
     $check->execute([$invoiceId]);
     $alreadySent = $check->fetchColumn();
@@ -34,10 +33,7 @@ function sendContractInvoice($invoiceId, $pdo) {
     $fileName = "Facture_Contrat_{$invoiceId}.pdf";
     $pdf->Output('F', "../pdfs/$fileName");
 
-    // Envoi par email (ou enregistrer pour récupération)
-    // ...
 
-    // Marquer comme envoyé
     $pdo->prepare("UPDATE invoices SET sent = 1 WHERE id = ?")->execute([$invoiceId]);
 }
 

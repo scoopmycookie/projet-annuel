@@ -9,7 +9,6 @@ if (!$companyId) {
     exit;
 }
 
-// Récupérer les infos de la société
 $stmt = $pdo->prepare("SELECT * FROM companies WHERE id = ?");
 $stmt->execute([$companyId]);
 $company = $stmt->fetch();
@@ -19,7 +18,6 @@ if (!$company) {
     exit;
 }
 
-// Supprimer un contrat
 if (isset($_GET['delete'])) {
     $contractId = (int)$_GET['delete'];
     $pdo->prepare("DELETE FROM contracts WHERE id = ? AND company_id = ?")->execute([$contractId, $companyId]);
@@ -27,7 +25,6 @@ if (isset($_GET['delete'])) {
     exit;
 }
 
-// Récupérer un contrat pour modification
 $editContract = null;
 if (isset($_GET['edit'])) {
     $stmt = $pdo->prepare("SELECT * FROM contracts WHERE id = ? AND company_id = ?");
@@ -35,7 +32,6 @@ if (isset($_GET['edit'])) {
     $editContract = $stmt->fetch();
 }
 
-// Ajouter ou modifier un contrat
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($_POST['id'])) {
         $stmt = $pdo->prepare("UPDATE contracts SET plan = ?, start_date = ?, end_date = ?, amount = ?, status = ? WHERE id = ? AND company_id = ?");
@@ -57,7 +53,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// Liste des contrats
 $stmt = $pdo->prepare("SELECT * FROM contracts WHERE company_id = ? ORDER BY start_date DESC");
 $stmt->execute([$companyId]);
 $contracts = $stmt->fetchAll();

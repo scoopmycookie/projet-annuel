@@ -5,12 +5,10 @@ include 'includes/header.php';
 session_start();
 $provider_id = $_SESSION['user_id'];
 
-// Récupérer les factures du prestataire
 $stmt = $pdo->prepare("SELECT * FROM provider_invoices WHERE provider_id = ? ORDER BY year DESC");
 $stmt->execute([$provider_id]);
 $invoices = $stmt->fetchAll();
 
-// Récupérer les services par année
 $services_stmt = $pdo->prepare("SELECT * FROM services WHERE provider_id = ? ORDER BY service_date DESC");
 $services_stmt->execute([$provider_id]);
 $services = $services_stmt->fetchAll();

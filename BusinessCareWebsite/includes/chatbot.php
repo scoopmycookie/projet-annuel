@@ -97,7 +97,6 @@ function sendChat() {
     const messages = document.getElementById('chatbot-messages');
     messages.innerHTML += `<p><strong>Vous :</strong> ${msg}</p>`;
 
-    // Réponses de base
     let response = "Désolé, je n'ai pas compris.";
     if (msg.toLowerCase().includes('horaire')) response = "Nos horaires sont de 9h à 18h.";
     if (msg.toLowerCase().includes('contact')) response = "Vous pouvez nous contacter à support@businesscare.fr";

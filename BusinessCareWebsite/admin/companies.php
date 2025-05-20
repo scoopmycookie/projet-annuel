@@ -19,14 +19,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $data[] = $_POST['id'];
         $pdo->prepare("UPDATE companies SET name=?, siret=?, industry=?, email=?, phone=?, website=?, address_street=?, address_city=?, address_postal_code=?, address_country=?, representative_name=?, employees=? WHERE id=?")->execute($data);
     } else {
-        // Insertion
         $pdo->prepare("INSERT INTO companies (name, siret, industry, email, phone, website, address_street, address_city, address_postal_code, address_country, representative_name, employees) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")->execute($data);
     }
     header("Location: companies.php");
     exit;
 }
 
-// Formulaire prérempli si ?edit=ID
 $editCompany = null;
 if (isset($_GET['edit'])) {
     $stmt = $pdo->prepare("SELECT * FROM companies WHERE id = ?");
@@ -34,10 +32,8 @@ if (isset($_GET['edit'])) {
     $editCompany = $stmt->fetch();
 }
 
-// Liste des sociétés
 $companies = $pdo->query("SELECT * FROM companies ORDER BY created_at DESC")->fetchAll();
 
-// Rendu HTML
 include 'includes/header.php';
 ?>
 

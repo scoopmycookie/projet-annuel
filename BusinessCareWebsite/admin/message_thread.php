@@ -5,7 +5,6 @@ include 'includes/header.php';
 $admin_id = $_SESSION['user_id'];
 $other_id = isset($_GET['user_id']) ? (int)$_GET['user_id'] : 0;
 
-// Vérifier que l'utilisateur existe
 $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
 $stmt->execute([$other_id]);
 $other_user = $stmt->fetch();
@@ -23,7 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['message'])) {
     exit;
 }
 
-// Charger la conversation
 $stmt = $pdo->prepare("
     SELECT m.*, u.name FROM messages m
     JOIN users u ON u.id = m.sender_id

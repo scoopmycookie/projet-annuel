@@ -5,7 +5,6 @@ include 'includes/header.php';
 $message = '';
 $can_post = false;
 
-// Vérification facture
 $stmt = $pdo->prepare("SELECT * FROM invoices WHERE company_id = ? ORDER BY created_at DESC LIMIT 1");
 $stmt->execute([$_SESSION['company_id']]);
 $invoice = $stmt->fetch();
@@ -14,14 +13,12 @@ if ($invoice && $invoice['status'] === 'paid') {
     $can_post = true;
 }
 
-// Suppression de service
 if (isset($_GET['delete'])) {
     $id = intval($_GET['delete']);
     $pdo->prepare("DELETE FROM services WHERE id = ? AND provider_id = ?")->execute([$id, $_SESSION['user_id']]);
     $message = "Service supprimé.";
 }
 
-// Ajout de service
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $can_post) {
     $stmt = $pdo->prepare("INSERT INTO services (title, description, category, price, service_date, service_time, capacity, duration, provider_id)
                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");

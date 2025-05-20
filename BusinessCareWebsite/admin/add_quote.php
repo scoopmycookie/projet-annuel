@@ -5,14 +5,12 @@ include 'includes/header.php';
 $errors = [];
 $success = false;
 
-// Récupérer les entreprises
 $companies = $pdo->query("SELECT id, name FROM companies ORDER BY name ASC")->fetchAll();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $company_id = (int) ($_POST['company_id'] ?? 0);
     $amount     = $_POST['amount'] ?? '';
 
-    // Vérifications
     if ($company_id <= 0) $errors[] = "Entreprise invalide.";
     if (!is_numeric($amount) || $amount <= 0) $errors[] = "Montant invalide.";
 

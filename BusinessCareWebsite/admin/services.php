@@ -7,7 +7,6 @@ $year = isset($_GET['year']) ? (int) $_GET['year'] : date('Y');
 $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $month, $year);
 $firstDayOfWeek = date('w', strtotime("$year-$month-01"));
 
-// Supprimer un service
 if (isset($_GET['delete'])) {
     $stmt = $pdo->prepare("DELETE FROM services WHERE id = ?");
     $stmt->execute([(int)$_GET['delete']]);
@@ -15,7 +14,6 @@ if (isset($_GET['delete'])) {
     exit;
 }
 
-// Ajouter un service (seulement si date >= aujourd'hui)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $selectedDate = $_POST['date'];
     if (strtotime($selectedDate) >= strtotime(date('Y-m-d'))) {

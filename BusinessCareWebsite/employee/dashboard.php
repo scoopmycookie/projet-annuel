@@ -16,7 +16,18 @@ if (!$invoice || $invoice['status'] !== 'paid') {
     include 'includes/footer.php';
     exit;
 }
+if ($_SESSION['role'] === 'employee') {
+    $stmt = $pdo->prepare("SELECT first_login FROM users WHERE id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $firstLogin = $stmt->fetchColumn();
+
+    if ($firstLogin) {
+        echo '<script src="../assets/js/tutorial.js"></script>';
+    }
+}
+
 ?>
+
 
 <main class="form-section">
     <h2>Bienvenue dans votre espace Employé</h2>

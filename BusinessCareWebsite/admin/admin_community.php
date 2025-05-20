@@ -2,18 +2,16 @@
 require_once '../includes/db.php';
 include 'includes/header.php';
 
-// Ajouter une publication communautaire
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content'])) {
     $stmt = $pdo->prepare("INSERT INTO community_posts (author, content, created_at) VALUES (?, ?, NOW())");
     $stmt->execute([
-        'Admin', // ou utiliser le nom du compte admin connecté
+        'Admin', 
         $_POST['content']
     ]);
     header("Location: admin_community.php");
     exit;
 }
 
-// Supprimer une publication
 if (isset($_GET['delete'])) {
     $stmt = $pdo->prepare("DELETE FROM community_posts WHERE id = ?");
     $stmt->execute([$_GET['delete']]);
@@ -21,7 +19,6 @@ if (isset($_GET['delete'])) {
     exit;
 }
 
-// Récupérer toutes les publications
 $posts = $pdo->query("SELECT * FROM community_posts ORDER BY created_at DESC")->fetchAll();
 ?>
 

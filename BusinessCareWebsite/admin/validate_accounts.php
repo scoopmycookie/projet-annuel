@@ -47,7 +47,6 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
                 exit;
             }
 
-            // Créer l'utilisateur
             $stmt = $pdo->prepare("INSERT INTO users (company_id, name, email, password, role, status)
                                    VALUES (?, ?, ?, ?, ?, 'approved')");
             $stmt->execute([
@@ -55,7 +54,6 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
                 $request['password'], $request['role']
             ]);
 
-            // Générer une facture automatiquement selon la grille tarifaire
             $stmt = $pdo->prepare("SELECT employees FROM companies WHERE id = ?");
             $stmt->execute([$company_id]);
             $company = $stmt->fetch();

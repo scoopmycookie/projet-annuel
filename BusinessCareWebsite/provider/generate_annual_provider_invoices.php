@@ -1,7 +1,7 @@
 <?php
 require_once '../includes/db.php';
 
-$yearToBill = date('Y') - 1; // facturation pour l'année précédente
+$yearToBill = date('Y') - 1; 
 
 $stmt = $pdo->prepare("
     SELECT provider_id, SUM(price) AS total

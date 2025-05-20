@@ -34,7 +34,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$limit_reached) {
         $stmt = $pdo->prepare("INSERT INTO chat_logs (user_id, question) VALUES (?, ?)");
         $stmt->execute([$user_id, $question]);
 
-        // Auto-réponse simple
         $keywords = [
             'horaire' => 'Les horaires sont disponibles sur la page Services.',
             'paiement' => 'Vos factures sont visibles dans l’espace entreprise.',

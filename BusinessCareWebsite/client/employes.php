@@ -5,19 +5,16 @@ include 'includes/header.php';
 $message = '';
 $limit_reached = false;
 
-// Récupérer la limite d'employés déclarée
 $stmt = $pdo->prepare("SELECT employees FROM companies WHERE id = ?");
 $stmt->execute([$_SESSION['company_id']]);
 $company = $stmt->fetch();
 $employee_limit = $company['employees'] ?? 0;
 
-// Compter les employés déjà ajoutés
 $stmt = $pdo->prepare("SELECT * FROM users WHERE company_id = ? AND role = 'employee' ORDER BY created_at DESC");
 $stmt->execute([$_SESSION['company_id']]);
 $employees = $stmt->fetchAll();
 $current_count = count($employees);
 
-// Empêche l'ajout si la limite est atteinte
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($current_count >= $employee_limit) {
         $message = "Limite d'employés atteinte pour votre entreprise.";

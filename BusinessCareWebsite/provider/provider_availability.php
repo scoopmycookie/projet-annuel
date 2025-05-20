@@ -3,11 +3,8 @@ require_once '../includes/db.php';
 include 'includes/header.php';
 
 session_start();
-$provider_id = $_SESSION['user_id']; // Assure-toi que l'ID du prestataire est bien en session
-
-// Ajouter un créneau et créer un service lié
+$provider_id = $_SESSION['user_id']; 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Insérer dans provider_availability
     $stmt = $pdo->prepare("INSERT INTO provider_availability (provider_id, available_date, start_time, end_time) VALUES (?, ?, ?, ?)");
     $stmt->execute([
         $provider_id,
@@ -16,13 +13,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_POST['end_time']
     ]);
 
-    // Créer un service automatiquement
     $service_stmt = $pdo->prepare("INSERT INTO services (title, service_date, service_time, price, capacity, duration, description, category, provider_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
     $service_stmt->execute([
         $_POST['title'],
         $_POST['date'],
         $_POST['start_time'],
-        $_POST['price'],
+      $_POST['price'],
         $_POST['capacity'],
         $_POST['duration'],
         $_POST['description'],
@@ -34,7 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// Supprimer un créneau
 if (isset($_GET['delete'])) {
     $stmt = $pdo->prepare("DELETE FROM provider_availability WHERE id = ? AND provider_id = ?");
     $stmt->execute([$_GET['delete'], $provider_id]);
@@ -42,12 +37,10 @@ if (isset($_GET['delete'])) {
     exit;
 }
 
-// Liste des créneaux
 $stmt = $pdo->prepare("SELECT * FROM provider_availability WHERE provider_id = ? ORDER BY available_date, start_time");
 $stmt->execute([$provider_id]);
 $slots = $stmt->fetchAll();
 
-// Liste des services
 $services_stmt = $pdo->prepare("SELECT * FROM services WHERE provider_id = ? ORDER BY service_date, service_time");
 $services_stmt->execute([$provider_id]);
 $services = $services_stmt->fetchAll();

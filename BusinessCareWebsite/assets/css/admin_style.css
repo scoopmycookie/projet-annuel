@@ -17,7 +17,6 @@ body {
     flex-direction: column;
 }
 
-/* Header */
 header {
     background-color: #003566;
     color: white;
@@ -49,7 +48,6 @@ nav ul li a:hover {
     text-decoration: underline;
 }
 
-/* Main */
 main.form-section {
     max-width: 1000px;
     margin: 30px auto;
@@ -66,7 +64,6 @@ main.form-section h2 {
     font-size: 1.5rem;
 }
 
-/* Cards */
 .service-list {
     display: flex;
     flex-wrap: wrap;
@@ -138,7 +135,6 @@ td a:hover {
     opacity: 0.8;
 }
 
-/* Details block for companies */
 #searchInput {
     width: 100%;
     padding: 12px;
@@ -184,7 +180,6 @@ ul li {
     font-size: 0.95rem;
 }
 
-/* Footer */
 footer {
     background-color: #1c1c1c;
     color: #ccc;
@@ -194,7 +189,6 @@ footer {
     margin-top: auto;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .service-list {
         flex-direction: column;

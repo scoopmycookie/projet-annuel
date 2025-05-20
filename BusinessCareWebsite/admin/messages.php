@@ -2,7 +2,6 @@
 require_once '../includes/db.php';
 include 'includes/header.php';
 
-// Récupérer toutes les conversations existantes
 $stmt = $pdo->prepare("
     SELECT u.id, u.name, u.email, MAX(m.created_at) as last_message
     FROM messages m
@@ -14,7 +13,6 @@ $stmt = $pdo->prepare("
 $stmt->execute(['admin_id' => $_SESSION['user_id']]);
 $threads = $stmt->fetchAll();
 
-// Liste de tous les utilisateurs pour envoyer un nouveau message
 $users = $pdo->query("SELECT id, name, email FROM users WHERE role != 'admin' ORDER BY name ASC")->fetchAll();
 ?>
 

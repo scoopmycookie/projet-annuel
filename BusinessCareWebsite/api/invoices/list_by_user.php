@@ -10,7 +10,6 @@ if (!isset($data['user_id'])) {
     exit;
 }
 
-// Récupérer la société du user
 $stmt = $pdo->prepare("SELECT company_id FROM users WHERE id = ?");
 $stmt->execute([$data['user_id']]);
 $user = $stmt->fetch();
@@ -21,7 +20,6 @@ if (!$user || !$user['company_id']) {
     exit;
 }
 
-// Liste des factures pour la société
 $stmt = $pdo->prepare("SELECT id, amount, status, created_at FROM invoices WHERE company_id = ? ORDER BY created_at DESC");
 $stmt->execute([$user['company_id']]);
 

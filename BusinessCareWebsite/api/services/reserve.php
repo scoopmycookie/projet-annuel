@@ -10,7 +10,6 @@ if (!isset($data['user_id'], $data['service_id'])) {
     exit;
 }
 
-// Vérifie si déjà réservé
 $stmt = $pdo->prepare("SELECT COUNT(*) FROM service_registrations WHERE user_id = ? AND service_id = ?");
 $stmt->execute([$data['user_id'], $data['service_id']]);
 if ($stmt->fetchColumn() > 0) {
@@ -19,7 +18,6 @@ if ($stmt->fetchColumn() > 0) {
     exit;
 }
 
-// Insère la réservation
 $stmt = $pdo->prepare("INSERT INTO service_registrations (user_id, service_id) VALUES (?, ?)");
 $stmt->execute([$data['user_id'], $data['service_id']]);
 

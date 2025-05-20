@@ -25,6 +25,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
             <li><a href="../admin/dashboard.php">Dashboard</a></li>
             <li><a href="../admin/validate_accounts.php">Valider Inscriptions</a></li>
             <li><a href="../admin/messages.php">Messages</a></li>
+                        <li><a href="../admin/community_moderation.php">Gestion Modération</a></li>
+
             <li><a href="../admin/users.php">Utilisateurs</a></li>
             <li><a href="../admin/companies.php">Entreprises</a></li>
             <li><a href="../admin/admin_community.php">communauté</a></li>

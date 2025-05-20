@@ -7,15 +7,12 @@ session_start();
 <?php
 if (!isset($_SESSION)) session_start();
 
-// Détection de la langue via l'URL
 if (isset($_GET['lang']) && in_array($_GET['lang'], ['fr', 'en', 'es'])) {
     $_SESSION['lang'] = $_GET['lang'];
 }
 
-// Langue par défaut
 $lang = $_SESSION['lang'] ?? 'fr';
 
-// Charger les traductions
 $lang_file = __DIR__ . '/../lang/' . $lang . '.php';
 $trans = file_exists($lang_file) ? include($lang_file) : include(__DIR__ . '/../lang/fr.php');
 ?>
